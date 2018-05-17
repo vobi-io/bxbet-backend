@@ -1,0 +1,57 @@
+<mjml>
+  <mj-body>
+    <mj-container>
+      <mj-section background-color="#f8f8f8">
+        <mj-column width="550px" background-color="#FFFFFF">
+          <mj-image width="163" src="https://i.imgur.com/cxc08gh.png"></mj-image>
+          <mj-text font-size="24px" align="center" color="#444343" padding-bottom="5px" padding-top="60px">
+             WELCOME TO bxbet
+          </mj-text>
+          <mj-text font-size="18px" align="center" color="red" padding-bottom="5px" padding-top="60px">
+             Please Read Carefully.
+          </mj-text>
+          <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="15px">
+          bxbet is designed to give the property manager a tenant generated Inventory
+           & Condition Report (with Photos) showing the way the rental property looks when the
+           tenant moves in. After Logging in to
+            <a href="http://www.bxbet.com" class="link-nostyle">bxbet.com</a>
+            submit the tenant contact information along with the rental property address and description. Please input the number of days the tenant is allowed to get the report returned after the lease begin date. The tenant will be sent a link to bxbet App and a one time usage code.
+            Thank you for choosing bxbet.
+          </mj-text>
+          <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="0px">
+            Please log in to your registration account to view the message.
+          </mj-text>
+          <mj-button align="center" font-size="18px" background-color="#24aae2"
+                color="#FFFFFF" border-radius="2px" width="215px" href="http://www.bxbet.com" inner-padding="15px 40px" padding-bottom="30" padding-top="20">
+            bxbet
+          </mj-button>
+          <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="0px">
+            Many thanks for your cooperation,
+          </mj-text>
+        </mj-column>
+      </mj-section>
+       <mj-section padding-top="36" background-color="#f8f8f8">
+         <mj-column>
+          <mj-text align="center" font-size="14px">
+             <div style="display: inline-flex; justify-content: center; align-items: center;">
+              <a href="#" style="color:#616161; text-decoration:none;">
+                Unsubscribe
+              </a>
+              <span style="color:#616161; padding-left: 10px; padding-right: 10px">•</span>
+              <a href="#" style="color:#616161; text-decoration:none;">
+                Privacy Policy
+              </a>
+              <span style="color:#616161; padding-left: 10px; padding-right: 10px">•</span>
+              <a href="#" style="color:#616161; text-decoration:none;">
+                Contact us
+              </a>
+            </div>
+          </mj-text>
+           <mj-text align="center" font-size="12px" color="#8c8c8c">
+            Copyright 2018 bxbet. All rights reserved.
+          </mj-text>
+          </mj-column>
+        </mj-section>
+    </mj-container>
+  </mj-body>
+</mjml>
