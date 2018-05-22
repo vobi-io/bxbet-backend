@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import './owned.sol';
-import './balance.sol';
+import "./owned.sol";
+import "./balance.sol";
 
 contract Bxbet is Owned, Balance {
     mapping(uint => Game) games;
