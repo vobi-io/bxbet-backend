@@ -42,8 +42,7 @@ contract Bxbet is Owned, Balance {
     constructor(
       uint256 initialSupply,
       string tokenName,
-      string tokenSymbol,
-      uint8 decimalUnits) Balance(initialSupply, tokenName, tokenSymbol)  public {
+      string tokenSymbol ) Balance(initialSupply, tokenName, tokenSymbol)  public {
         gameIndex = 0;
     }
 
@@ -55,8 +54,8 @@ contract Bxbet is Owned, Balance {
         uint _startDate, uint _endDate, uint _status) public {
         require (now > _startDate);
         require (_startDate < _endDate);
-        gameIndex += 1;
         Game memory game = Game(gameIndex, _title, _team1, _team2, _category,  _startDate, _endDate, EventStatus(_status), msg.sender, 0);
+        gameIndex += 1;
         games[gameIndex] = game;
 
         emit AddGameEvent(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate, _status, msg.sender);
@@ -76,6 +75,7 @@ contract Bxbet is Owned, Balance {
     function placeOrder(uint _gameId,  uint _betType, uint _amount, uint _odd, uint _outcome) payable public returns (bool) {
         Game storage game = games[_gameId];
         require (now < game.startDate);
+        //todo check on progress
         game.bets[game.totalBets] = Bet(msg.sender, _gameId, BetType(_betType), _amount, _odd, Outcome(_outcome));
         game.totalBets += 1;
         return true;
