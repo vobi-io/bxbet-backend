@@ -10,9 +10,14 @@ contract Balance {
     // 18 decimals is the strongly suggested default, avoid changing it
     uint256 public totalSupply;
 
+    struct Wallet {
+        uint256 amount;
+        address owner;
+        uint256 blockAmount;
+    }
+
     // This creates an array with all balances
-    mapping (address => uint256) public balanceOf;
-    mapping (address => mapping (address => uint256)) public allowance;
+    mapping (address => Wallet) public balanceOf;
 
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -30,31 +35,33 @@ contract Balance {
         string tokenName,
         string tokenSymbol
     ) public {
-        totalSupply = initialSupply * 10 ** uint256(decimals);  // Update total supply with the decimal amount
-        balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
-        name = tokenName;                                   // Set the name for display purposes
-        symbol = tokenSymbol;                               // Set the symbol for display purposes
+        totalSupply = initialSupply * 10 ** uint256(decimals);      // Update total supply with the decimal amount
+        balanceOf[msg.sender] = Wallet(totalSupply, msg.sender, 0); // Give the creator all initial tokens
+        name = tokenName;                                           // Set the name for display purposes
+        symbol = tokenSymbol;                                       // Set the symbol for display purposes
     }
 
     /**
      * Internal transfer, only can be called by this contract
      */
-    function _transfer(address _from, address _to, uint _value) internal {
+    function _transferTokens(address _from, address _to, uint _value) internal {
         // Prevent transfer to 0x0 address. Use burn() instead
         require(_to != 0x0);
         // Check if the sender has enough
-        require(balanceOf[_from] >= _value);
+        Wallet storage walletFrom = balanceOf[_from];
+        require(walletFrom.amount >= _value);
         // Check for overflows
-        require(balanceOf[_to] + _value > balanceOf[_to]);
+        Wallet storage walletTo = balanceOf[_to];
+        require(walletTo.amount + _value > walletTo.amount);
         // Save this for an assertion in the future
-        uint previousBalances = balanceOf[_from] + balanceOf[_to];
+        uint previousBalances = walletFrom.amount + walletTo.amount;
         // Subtract from the sender
-        balanceOf[_from] -= _value;
+        walletFrom.amount -= _value;
         // Add the same to the recipient
-        balanceOf[_to] += _value;
-        Transfer(_from, _to, _value);
+        walletTo.amount += _value;
+        emit Transfer(_from, _to, _value);
         // Asserts are used to use static analysis to find bugs in your code. They should never fail
-        assert(balanceOf[_from] + balanceOf[_to] == previousBalances);
+        assert(walletFrom.amount + walletTo.amount == previousBalances);
     }
 
     /**
@@ -65,57 +72,54 @@ contract Balance {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-    function transfer(address _to, uint256 _value) public {
-        _transfer(msg.sender, _to, _value);
+    function transferTokens(address _to, uint256 _value) public {
+        _transferTokens(msg.sender, _to, _value);
     }
 
     /**
-     * Transfer tokens from other address
+     * Block tokens
      *
-     * Send `_value` tokens to `_to` in behalf of `_from`
+     * Send `_value` tokens to `_to` from your account
      *
-     * @param _from The address of the sender
-     * @param _to The address of the recipient
-     * @param _value the amount to send
+     * @param _user The address of the recipient
+     * @param _value the amount to block
      */
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        require(_value <= allowance[_from][msg.sender]);     // Check allowance
-        allowance[_from][msg.sender] -= _value;
-        _transfer(_from, _to, _value);
-        return true;
+    function blockTokens(address _user, uint256 _value) public {
+        // Prevent transfer to 0x0 address. Use burn() instead
+        require(_user != 0x0);
+        // Check if the sender has enough
+        Wallet storage wallet = balanceOf[_user];
+        require(wallet.amount >= _value);
+        // Save this for an assertion in the future
+        uint previousBalances = wallet.amount;
+        // Subtract from the active balance
+        wallet.amount -= _value;
+        // Add block amount into the block balance
+        wallet.blockAmount += _value;
+        assert(wallet.amount + _value == previousBalances);
     }
 
     /**
-     * Set allowance for other address
+     * Unblock tokens
      *
-     * Allows `_spender` to spend no more than `_value` tokens in your behalf
+     * Unblock `_value` tokens to `_user` from your account
      *
-     * @param _spender The address authorized to spend
-     * @param _value the max amount they can spend
+     * @param _user The address of the recipient
+     * @param _value the amount to block
      */
-    function approve(address _spender, uint256 _value) public
-        returns (bool success) {
-        allowance[msg.sender][_spender] = _value;
-        return true;
-    }
-
-    /**
-     * Set allowance for other address and notify
-     *
-     * Allows `_spender` to spend no more than `_value` tokens in your behalf, and then ping the contract about it
-     *
-     * @param _spender The address authorized to spend
-     * @param _value the max amount they can spend
-     * @param _extraData some extra information to send to the approved contract
-     */
-    function approveAndCall(address _spender, uint256 _value, bytes _extraData)
-        public
-        returns (bool success) {
-        tokenRecipient spender = tokenRecipient(_spender);
-        if (approve(_spender, _value)) {
-            spender.receiveApproval(msg.sender, _value, this, _extraData);
-            return true;
-        }
+    function unblockTokens(address _user, uint256 _value) public {
+        // Prevent transfer to 0x0 address. Use burn() instead
+        require(_user != 0x0);
+        // Check if the sender has enough
+        Wallet storage wallet = balanceOf[_user];
+        require(wallet.amount >= _value);
+        // Save this for an assertion in the future
+        uint previousBalances = wallet.amount;
+        // Subtract from the active balance
+        wallet.blockAmount -= _value;
+        // Add block amount into the block balance
+        wallet.amount += _value;
+        assert(wallet.amount - _value == previousBalances);
     }
 
     /**
@@ -126,102 +130,11 @@ contract Balance {
      * @param _value the amount of money to burn
      */
     function burn(uint256 _value) public returns (bool success) {
-        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
-        balanceOf[msg.sender] -= _value;            // Subtract from the sender
+        Wallet storage wallet = balanceOf[msg.sender];
+        require(wallet.amount >= _value);   // Check if the sender has enough
+        wallet.amount -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
-        Burn(msg.sender, _value);
+        emit Burn(msg.sender, _value);
         return true;
-    }
-
-    /**
-     * Destroy tokens from other account
-     *
-     * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
-     *
-     * @param _from the address of the sender
-     * @param _value the amount of money to burn
-     */
-    function burnFrom(address _from, uint256 _value) public returns (bool success) {
-        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
-        require(_value <= allowance[_from][msg.sender]);    // Check allowance
-        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
-        allowance[_from][msg.sender] -= _value;             // Subtract from the sender's allowance
-        totalSupply -= _value;                              // Update totalSupply
-        Burn(_from, _value);
-        return true;
-    }
-}
-
-/******************************************/
-/*       ADVANCED TOKEN STARTS HERE       */
-/******************************************/
-
-contract MyAdvancedToken is owned, TokenERC20 {
-
-    uint256 public sellPrice;
-    uint256 public buyPrice;
-
-    mapping (address => bool) public frozenAccount;
-
-    /* This generates a public event on the blockchain that will notify clients */
-    event FrozenFunds(address target, bool frozen);
-
-    /* Initializes contract with initial supply tokens to the creator of the contract */
-    function MyAdvancedToken(
-        uint256 initialSupply,
-        string tokenName,
-        string tokenSymbol
-    ) TokenERC20(initialSupply, tokenName, tokenSymbol) public {}
-
-    /* Internal transfer, only can be called by this contract */
-    function _transfer(address _from, address _to, uint _value) internal {
-        require (_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
-        require (balanceOf[_from] >= _value);               // Check if the sender has enough
-        require (balanceOf[_to] + _value >= balanceOf[_to]); // Check for overflows
-        require(!frozenAccount[_from]);                     // Check if sender is frozen
-        require(!frozenAccount[_to]);                       // Check if recipient is frozen
-        balanceOf[_from] -= _value;                         // Subtract from the sender
-        balanceOf[_to] += _value;                           // Add the same to the recipient
-        Transfer(_from, _to, _value);
-    }
-
-    /// @notice Create `mintedAmount` tokens and send it to `target`
-    /// @param target Address to receive the tokens
-    /// @param mintedAmount the amount of tokens it will receive
-    function mintToken(address target, uint256 mintedAmount) onlyOwner public {
-        balanceOf[target] += mintedAmount;
-        totalSupply += mintedAmount;
-        Transfer(0, this, mintedAmount);
-        Transfer(this, target, mintedAmount);
-    }
-
-    /// @notice `freeze? Prevent | Allow` `target` from sending & receiving tokens
-    /// @param target Address to be frozen
-    /// @param freeze either to freeze it or not
-    function freezeAccount(address target, bool freeze) onlyOwner public {
-        frozenAccount[target] = freeze;
-        FrozenFunds(target, freeze);
-    }
-
-    /// @notice Allow users to buy tokens for `newBuyPrice` eth and sell tokens for `newSellPrice` eth
-    /// @param newSellPrice Price the users can sell to the contract
-    /// @param newBuyPrice Price users can buy from the contract
-    function setPrices(uint256 newSellPrice, uint256 newBuyPrice) onlyOwner public {
-        sellPrice = newSellPrice;
-        buyPrice = newBuyPrice;
-    }
-
-    /// @notice Buy tokens from contract by sending ether
-    function buy() payable public {
-        uint amount = msg.value / buyPrice;               // calculates the amount
-        _transfer(this, msg.sender, amount);              // makes the transfers
-    }
-
-    /// @notice Sell `amount` tokens to contract
-    /// @param amount amount of tokens to be sold
-    function sell(uint256 amount) public {
-        require(this.balance >= amount * sellPrice);      // checks if the contract has enough ether to buy
-        _transfer(msg.sender, this, amount);              // makes the transfers
-        msg.sender.transfer(amount * sellPrice);          // sends ether to the seller. It's important to do this last to avoid recursion attacks
     }
 }
