@@ -1,5 +1,5 @@
 const typeList = ['Football', 'News']
-const categoryList = ['Football', 'Basketball', 'Tenis']
+const categoryList = ['Football', 'Basketball', 'Tennis', 'hokey']
 
 module.exports = (mongoose) => {
   let Schema = mongoose.Schema
