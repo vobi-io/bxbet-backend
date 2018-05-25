@@ -1,7 +1,5 @@
 pragma solidity ^0.4.24;
 
-interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public; }
-
 contract Balance {
     // Public variables of the token
     string public name;
@@ -30,11 +28,7 @@ contract Balance {
      *
      * Initializes contract with initial supply tokens to the creator of the contract
      */
-    constructor(
-        uint256 initialSupply,
-        string tokenName,
-        string tokenSymbol
-    ) public {
+    constructor(uint256 initialSupply, string tokenName, string tokenSymbol) public {
         totalSupply = initialSupply * 10 ** uint256(decimals);      // Update total supply with the decimal amount
         balanceOf[msg.sender] = Wallet(totalSupply, msg.sender, 0); // Give the creator all initial tokens
         name = tokenName;                                           // Set the name for display purposes

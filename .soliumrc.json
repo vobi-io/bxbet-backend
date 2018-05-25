@@ -2,7 +2,9 @@
   "extends": "solium:recommended",
   "plugins": ["security"],
   "rules": {
-    "quotes": ["error", "double"],
-    "indentation": ["error", 4]
+    "imports-on-top": 0,
+    "variable-declarations": 0,
+    "indentation": ["error", 4],
+    "quotes": ["error", "double"]
   }
 }
