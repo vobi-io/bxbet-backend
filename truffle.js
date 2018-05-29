@@ -8,6 +8,12 @@ module.exports = {
       port: 8545,
       network_id: '*'
       // gas: 470000
+    },
+    ropsten: {
+      network_id: 3,
+      host: 'localhost',
+      port: 8545,
+      gas: 2900000
     }
   }
 }

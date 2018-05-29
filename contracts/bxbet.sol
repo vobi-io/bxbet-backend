@@ -52,7 +52,7 @@ contract Bxbet is Owned, Balance {
         gameIndex = 0;
     }
 
-    event AddGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category,
+    event AddGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category);
     event finishGame(uint _gameId, string _title, string _team1, string _team2, string _category,
     uint _startDate, uint _endDate, uint _status, address owner);
 
@@ -78,9 +78,9 @@ contract Bxbet is Owned, Balance {
     function finishBuyBets(uint outcome) private {
         for(uint i = 0; i < game.totalBuyBets; i++) {
             Bet memory bet = games.buyBets[i];
-            if(bet.status !== BetStatus.Closed) {
-                if( bet.status === BetStatus.Matched){
-                  if(bet.outcome === BetStatus(outcome)){
+            if(bet.status != BetStatus.Closed) {
+                if( bet.status == BetStatus.Matched){
+                  if(bet.outcome == BetStatus(outcome)){
                     game.buyBets[i].status = BetStatus.Win;
                     game.sellBets[bet.matchedBetId].status = BetStatus.Lose;
                   }else{
@@ -97,8 +97,8 @@ contract Bxbet is Owned, Balance {
     function finishGame(uint _gameId, outcome) public {
         Game storage game = games[_gameId];
         require (now > game.endDate);
-        finishBuyBets(outcome)
-        game.status = EventStatus.Finished
+        finishBuyBets(outcome);
+        game.status = EventStatus.Finished;
     }
 
     function getBetById(uint _gameId, uint _betId) view public returns (address, uint, BetType, uint, uint, Outcome) {
