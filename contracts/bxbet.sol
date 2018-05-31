@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
-import "./owned.sol";
-import "./balance.sol";
+import "./Owned.sol";
+import "./Balance.sol";
 
-contract Bxorder is Owned, Balance {
+contract BXBet is Owned, Balance {
     mapping(uint => Game) games;
     enum GameStatus { Open, Finished, InProgress }
     enum OrderType { Buy, Sell }
@@ -78,6 +78,7 @@ contract Bxorder is Owned, Balance {
 
 
     function finishBuyOrders(uint _gameId, uint outcome) private {
+
         Game storage game = games[_gameId];
         for(uint i = 0; i < game.totalBuyOrders; i++) {
             Order storage order = game.buyOrders[i];

@@ -1,5 +1,5 @@
-// var Voting = artifacts.require("./Voting.sol")
+var BXBet = artifacts.require("./BXBet.sol")
 
-// module.exports = function(deployer) {
-//   deployer.deploy(Voting);
-// };
+module.exports = function(deployer) {
+  deployer.deploy(BXBet);
+};
