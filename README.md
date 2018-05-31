@@ -9,16 +9,15 @@
 #### Deployment to Ropsten network
 ``` truffle migrate --network ropsten ```
 
-#### Deployment to ganache
+#### Run ganache
+``` node_modules/.bin/ganache-cli ```
+
+#### Deployment to local (ganache)
 ``` truffle migrate --reset ```
 
 
 Run Test mode
 -----------
-
 ```shell
-node_modules/.bin/ganache-cli
-
 truffle exec ./contracts/seed.js
-truffle console
 ```

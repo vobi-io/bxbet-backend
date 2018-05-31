@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/btomashvili/bxbet-backend/#readme",
   "scripts": {
+    "migrate": "truffle compile && truffle migrate --reset",
     "lint": "eslint . --quiet",
     "build": "webpack",
     "dev": "webpack-dev-server",

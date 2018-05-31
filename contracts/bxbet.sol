@@ -5,7 +5,7 @@ import "./Balance.sol";
 
 contract BXBet is Owned, Balance {
     mapping(uint => Game) games;
-    enum GameStatus { Open, Finished, InProgress }
+    enum GameStatus { Open, InProgress, Finished }
     enum OrderType { Buy, Sell }
     enum OrderStatus { Open, Matched, Win, Lose, Closed }
     enum OrderOutcome {Draw, One, Two }
@@ -53,21 +53,21 @@ contract BXBet is Owned, Balance {
         gameIndex = 0;
     }
 
-    event AddGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category, uint _startDate, uint _endDate, uint status, address owner);
+    event AddGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category, uint _startDate, uint _endDate);
 
 
     event FinishGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category, uint _startDate, uint _endDate, uint _status, address owner);
 
     function addGame(
         string _title, string _team1, string _team2, string _category,
-        uint _startDate, uint _endDate, uint _status) public {
-        require (now > _startDate);
+        uint _startDate, uint _endDate,  uint status) public {
+        // require (now > _startDate);
         require (_startDate < _endDate);
-        Game memory game = Game(gameIndex, _title, _team1, _team2, _category,  _startDate, _endDate, GameStatus(_status), msg.sender, 0, 0);
         gameIndex += 1;
+        Game memory game = Game(gameIndex, _title, _team1, _team2, _category,  _startDate, _endDate, GameStatus(status), msg.sender, 0, 0);
         games[gameIndex] = game;
 
-        emit AddGameEvent(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate, _status, msg.sender);
+        emit AddGameEvent(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate);
     }
 
     function getGame(uint _gameId) view public returns (uint, string, string, string, string, uint, uint, GameStatus, address, uint, uint) {
@@ -100,7 +100,6 @@ contract BXBet is Owned, Balance {
 
     function finishGame(uint _gameId, uint outcome) public {
         Game storage game = games[_gameId];
-        require (now > game.endDate);
         finishBuyOrders(_gameId, outcome);
         game.status = GameStatus.Finished;
     }
@@ -145,7 +144,7 @@ contract BXBet is Owned, Balance {
 
     function placeOrder(uint _gameId,  uint _orderType, uint _amount, uint _odd, uint _outcome) payable public returns (bool) {
         Game storage game = games[_gameId];
-        require (now < game.startDate);
+        // require (now < game.startDate);
         uint newId = game.totalBuyOrders + game.totalSellOrders;
         Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd, OrderOutcome(_outcome), OrderStatus.Open, None);
         if (OrderType(_orderType) == OrderType.Buy){
