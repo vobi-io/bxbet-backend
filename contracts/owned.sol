@@ -12,7 +12,7 @@ contract Owned {
         _;
     }
 
-    function transferOwnership(address newOwner) onlyOwner {
+    function transferOwnership(address newOwner) onlyOwner  public {
         owner = newOwner;
     }
 }

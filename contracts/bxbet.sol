@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 import "./owned.sol";
 import "./balance.sol";
 
-contract Bxbet is Owned, Balance {
+contract Bxorder is Owned, Balance {
     mapping(uint => Game) games;
     enum GameStatus { Open, Finished, InProgress }
     enum OrderType { Buy, Sell }
@@ -32,7 +32,7 @@ contract Bxbet is Owned, Balance {
         uint id;
         address player;
         uint gameId;
-        OrderType betType; // buy or sell
+        OrderType orderType; // buy or sell
         uint amount; // 100
         uint odd; // 1.5
         OrderOutcome outcome; // 1, x, 2
@@ -52,9 +52,8 @@ contract Bxbet is Owned, Balance {
         gameIndex = 0;
     }
 
-    event AddGameGame(uint _gameId, string _title, string _team1, string _team2, string _category);
-    event finishGame(uint _gameId, string _title, string _team1, string _team2, string _category,
-    uint _startDate, uint _endDate, uint _status, address owner);
+    event AddGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category);
+    event FinishGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category, uint _startDate, uint _endDate, uint _status, address owner);
 
     function addGame(
         string _title, string _team1, string _team2, string _category,
@@ -65,7 +64,7 @@ contract Bxbet is Owned, Balance {
         gameIndex += 1;
         games[gameIndex] = game;
 
-        emit AddGameGame(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate, _status, msg.sender);
+        emit AddGameEvent(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate, _status, msg.sender);
     }
 
     function getGame(uint _gameId) view public returns (uint, string, string, string, string, uint, uint, GameStatus, address, uint) {
@@ -75,17 +74,17 @@ contract Bxbet is Owned, Balance {
     }
 
 
-    function finishBuyOrders(uint outcome) private {
+    function finishBuyOrders(Game game, uint outcome) private {
         for(uint i = 0; i < game.totalBuyOrders; i++) {
-            Order memory bet = games.buyOrders[i];
-            if(bet.status != OrderStatus.Closed) {
-                if( bet.status == OrderStatus.Matched){
-                  if(bet.outcome == OrderOutcome(outcome)){
+            Order memory order = games.buyOrders[i];
+            if(order.status != OrderStatus.Closed) {
+                if( order.status == OrderStatus.Matched){
+                  if(order.outcome == OrderOutcome(outcome)){
                     game.buyOrders[i].status = OrderStatus.Win;
-                    game.sellOrders[bet.matchedOrderId].status = OrderStatus.Lose;
+                    game.sellOrders[order.matchedOrderId].status = OrderStatus.Lose;
                   }else{
                     game.buyOrders[i].status = OrderStatus.Lose;
-                    game.sellOrders[bet.matchedOrderId].status = OrderStatus.Win;
+                    game.sellOrders[order.matchedOrderId].status = OrderStatus.Win;
                   }
                 }else{
                    game.buyOrders[i].status = OrderStatus.Closed;
@@ -97,49 +96,49 @@ contract Bxbet is Owned, Balance {
     function finishGame(uint _gameId, uint outcome) public {
         Game storage game = games[_gameId];
         require (now > game.endDate);
-        finishBuyOrders(outcome);
+        finishBuyOrders(game, outcome);
         game.status = GameStatus.Finished;
     }
 
-    function getOrderById(uint _gameId, uint _betId) view public returns (address, uint, OrderType, uint, uint, OrderOutcome) {
-        Order memory bet = games[_gameId].bets[_betId];
-        return (bet.player, bet.gameId, bet.betType, bet.amount, bet.odd, bet.outcome);
+    function getOrderById(uint _gameId, uint _orderId) view public returns (address, uint, OrderType, uint, uint, OrderOutcome) {
+        Order memory order = games[_gameId].orders[_orderId];
+        return (order.player, order.gameId, order.orderType, order.amount, order.odd, order.outcome);
     }
 
     function checkSellMatched(Game game, Order newOrder) private {
         for(uint i = 0; i < game.totalBuyOrders; i++) {
-            Order memory bet = games.buyOrders[i];
-            if(bet.amount == newOrder.amount &&
-              bet.odd == newOrder.odd &&
-              bet.outcome == newOrder.outcome &&
-              bet.status == OrderStatus.Open) {
+            Order memory order = games.buyOrders[i];
+            if(order.amount == newOrder.amount &&
+              order.odd == newOrder.odd &&
+              order.outcome == newOrder.outcome &&
+              order.status == OrderStatus.Open) {
                 game.buyOrders[i].status = OrderStatus.matched;
                 game.buyOrders[i].matchedOrderId = OrderStatus.matched;
-                newOrder.matchedOrderId = bet.id;
+                newOrder.matchedOrderId = order.id;
               }
         }
     }
 
     function checkBuyMatched(Game game, Order newOrder) private {
         for(uint i = 0; i < game.totalSellOrders; i++) {
-            Order memory bet = games.sellOrders[i];
-            if(bet.amount == newOrder.amount &&
-              bet.odd == newOrder.odd &&
-              bet.outcome == newOrder.outcome &&
-              bet.status == OrderStatus.Open) {
+            Order memory order = games.sellOrders[i];
+            if(order.amount == newOrder.amount &&
+              order.odd == newOrder.odd &&
+              order.outcome == newOrder.outcome &&
+              order.status == OrderStatus.Open) {
                 game.sellOrders[i].status = OrderStatus.matched;
                 game.sellOrders[i].matchedOrderId = OrderStatus.matched;
-                newOrder.matchedOrderId = bet.id;
+                newOrder.matchedOrderId = order.id;
               }
         }
     }
 
-    function placeOrder(uint _gameId,  uint _betType, uint _amount, uint _odd, uint _outcome) payable public returns (bool) {
+    function placeOrder(uint _gameId,  uint _orderType, uint _amount, uint _odd, uint _outcome) payable public returns (bool) {
         Game storage game = games[_gameId];
         require (now < game.startDate);
         uint newId = game.totalBuyOrders + game.totalSellOrders;
-        Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_betType), _amount, _odd, OrderOutcome(_outcome), OrderStatus.Open, -1);
-        if (OrderType(_betType) == OrderType.Buy){
+        Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd, OrderOutcome(_outcome), OrderStatus.Open, -1);
+        if (OrderType(_orderType) == OrderType.Buy){
             game.totalBuyOrders += 1;
             checkBuyMatched(game, newOrder);
             game.buyOrders[game.totalBuyOrders - 1] = newOrder;
