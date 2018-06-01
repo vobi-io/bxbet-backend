@@ -8,8 +8,7 @@ class StripeService {
   }
 
   createCustomer (name, email, description, token) {
-    const data = {
-      email,
+    const data = { email,
       description,
       metadata: {
         name

@@ -1,6 +1,6 @@
 
 module.exports = {
-  port: 8002,
+  port: 8005,
   HTTP_HOST: 'http://localhost:8001',
   database: {
     connection: 'mongodb://localhost:27017/bxbet'

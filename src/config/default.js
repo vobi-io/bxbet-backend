@@ -4,7 +4,7 @@ var path = require('path')
 var rootFolder = path.resolve(__dirname, '..')
 
 module.exports = {
-  port: 8002,
+  port: 8005,
   database: {
     connection: 'mongodb://localhost:27017/bxbet'
   },
@@ -19,8 +19,8 @@ module.exports = {
     defaultPhoneNumber: '+19132465722'
   },
   socket: {
-    port: 8002,
-    server: 'http://localhost:8002/'
+    port: 8006,
+    server: 'http://localhost:8006/'
   },
   auth: {
     activationTokenExpiresIn: ms('1d'),

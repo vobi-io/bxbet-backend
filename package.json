@@ -28,7 +28,7 @@
     "pm2_prod": "NODE_ENV=production CONFIG=production pm2 start ./bin/www --name bexbet_8001",
     "start:local": "CONFIG=development_local nodemon bin/www",
     "socket": "node socket/index.js",
-    "socket_pm2": "pm2 start socket/index.js --name socket_server_8002",
+    "socket_pm2": "pm2 start socket/index.js --name socket_server_8005",
     "swagger": "apidoc-swagger -i app -o public/swagger",
     "apidoc": "apidoc -i app -o public/doc",
     "test": "NODE_ENV=test mocha --timeout 10000",
