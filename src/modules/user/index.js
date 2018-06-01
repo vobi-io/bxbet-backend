@@ -30,7 +30,13 @@ const getRouteV1 = (db) => {
 
 const getGraphql = ({db, TC}) => {
   const { isAuthenticated } = require('../../policies/graphqlAuth')
-  return require('./userGraphql')({UserModel: db.UserModel, isAuthenticated, TC})
+  return require('./userGraphql')({
+    UserModel: db.UserModel,
+    isAuthenticated,
+    userRepository: getUerRepository(db),
+    authRepository: getAuthRepository(db),
+    TC
+  })
 }
 
 module.exports = {

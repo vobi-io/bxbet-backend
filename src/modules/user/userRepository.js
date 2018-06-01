@@ -4,7 +4,7 @@
 var AuthRepository = require('./authRepository')
 var roles = require('../roles/roles').roles
 var Utils = require('../../utils/Utils')
-var MailService = require('../../services/mailService/mailgunService')
+var MailService = require('../../services/mailgun/mailgunService')
 var Promise = require('bluebird')
 
 class UserRepo {

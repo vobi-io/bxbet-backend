@@ -4,7 +4,7 @@ var path = require('path')
 var rootFolder = path.resolve(__dirname, '..')
 
 module.exports = {
-  port: 8001,
+  port: 8002,
   database: {
     connection: 'mongodb://localhost:27017/bxbet'
   },

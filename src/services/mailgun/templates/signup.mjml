@@ -5,25 +5,25 @@
         <mj-column width="550px" background-color="#FFFFFF">
           <mj-image width="163" src="https://i.imgur.com/cxc08gh.png"></mj-image>
           <mj-text font-size="24px" align="center" color="#444343" padding-bottom="5px" padding-top="60px">
-             WELCOME TO bxbet
+             WELCOME TO bookinggenius
           </mj-text>
           <mj-text font-size="18px" align="center" color="red" padding-bottom="5px" padding-top="60px">
              Please Read Carefully.
           </mj-text>
           <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="15px">
-          bxbet is designed to give the property manager a tenant generated Inventory
+          bookinggenius is designed to give the property manager a tenant generated Inventory
            & Condition Report (with Photos) showing the way the rental property looks when the
            tenant moves in. After Logging in to
-            <a href="http://www.bxbet.com" class="link-nostyle">bxbet.com</a>
-            submit the tenant contact information along with the rental property address and description. Please input the number of days the tenant is allowed to get the report returned after the lease begin date. The tenant will be sent a link to bxbet App and a one time usage code.
-            Thank you for choosing bxbet.
+            <a href="http://www.bookinggenius.com" class="link-nostyle">bookinggenius.com</a>
+            submit the tenant contact information along with the rental property address and description. Please input the number of days the tenant is allowed to get the report returned after the lease begin date. The tenant will be sent a link to bookinggenius App and a one time usage code.
+            Thank you for choosing bookinggenius.
           </mj-text>
           <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="0px">
             Please log in to your registration account to view the message.
           </mj-text>
           <mj-button align="center" font-size="18px" background-color="#24aae2"
-                color="#FFFFFF" border-radius="2px" width="215px" href="http://www.bxbet.com" inner-padding="15px 40px" padding-bottom="30" padding-top="20">
-            bxbet
+                color="#FFFFFF" border-radius="2px" width="215px" href="http://www.bookinggenius.com" inner-padding="15px 40px" padding-bottom="30" padding-top="20">
+            bookinggenius
           </mj-button>
           <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="0px">
             Many thanks for your cooperation,
@@ -48,7 +48,7 @@
             </div>
           </mj-text>
            <mj-text align="center" font-size="12px" color="#8c8c8c">
-            Copyright 2018 bxbet. All rights reserved.
+            Copyright 2018 bookinggenius. All rights reserved.
           </mj-text>
           </mj-column>
         </mj-section>

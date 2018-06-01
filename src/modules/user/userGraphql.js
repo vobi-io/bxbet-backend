@@ -1,34 +1,154 @@
-var { composeWithMongoose } = require('graphql-compose-mongoose/node8')
-const customizationOptions = {} // left it empty for simplicity, described below
+'use strict'
 
-module.exports = ({UserModel, isAuthenticated, TC}) => {
+const {
+  composeWithMongoose
+} = require('graphql-compose-mongoose/node8')
+const {
+  isAuthenticated,
+  attachToAll,
+
+} = require('../core/graphql')
+
+module.exports = ({
+  UserModel,
+  TC,
+  authRepository,
+  userRepository
+}) => {
   const { schemaComposer } = TC
-  const UserTC = composeWithMongoose(UserModel, customizationOptions)
 
-  schemaComposer.rootQuery().addFields({
-    userById: UserTC.getResolver('findById'),
-    userByIds: UserTC.getResolver('findByIds'),
-    userOne: UserTC.getResolver('findOne'),
-    userMany: UserTC.getResolver('findMany'),
-    userCount: UserTC.getResolver('count'),
-    userConnection: UserTC.getResolver('connection'),
-    userPagination: UserTC.getResolver('pagination')
+  const AccessTokenTC = `
+    type AccessToken {
+      accessToken: String
+    }
+  `
+  const UserTC = composeWithMongoose(UserModel, {})
 
-    // ...isAuthenticated({
-    //   currentUser: (parent, args, context, info) => context.user
-    // })
+  UserTC.removeField(['password', '__v', 'account'])
+
+
+  UserTC.addResolver({
+    name: 'me',
+    type: UserTC,
+    resolve: ({ context }) =>
+      context.user.toJSON()
   })
 
-  schemaComposer.rootMutation().addFields({
-    userCreate: UserTC.getResolver('createOne'),
-    userUpdateById: UserTC.getResolver('updateById'),
-    userUpdateOne: UserTC.getResolver('updateOne'),
-    userUpdateMany: UserTC.getResolver('updateMany'),
-    userRemoveById: UserTC.getResolver('removeById'),
-    userRemoveOne: UserTC.getResolver('removeOne'),
-    userRemoveMany: UserTC.getResolver('removeMany')
+  UserTC.addResolver({
+    name: 'signUp',
+    args: {
+      email: 'String',
+      password: 'String',
+      role: UserTC.getFieldType('role')
+    },
+    type: AccessTokenTC,
+    resolve: ({ args }) =>
+      authRepository.signUp(args)
   })
+
+  UserTC.addResolver({
+    name: 'signIn',
+    args: {
+      email: 'String',
+      password: 'String'
+    },
+    type: AccessTokenTC,
+    resolve: ({ args }) =>
+      authRepository.signIn(args)
+  })
+
+  UserTC.addResolver({
+    name: 'refreshToken',
+    args: {
+      token: 'String'
+    },
+    type: AccessTokenTC,
+    resolve: ({ context }) =>
+      authRepository.refreshToken(context)
+  })
+
+  UserTC.addResolver({
+    name: 'changePassword',
+    args: {
+      oldPassword: 'String',
+      newPassword: 'String'
+    },
+    type: UserTC,
+    resolve: ({ args, context: { user } }) =>
+      authRepository.changePassword(
+        Object.assign(args, { user })
+      )
+  })
+
+  UserTC.addResolver({
+    name: 'requestResetPassword',
+    args: {
+      email: 'String'
+    },
+    type: UserTC,
+    resolve: ({ args }) =>
+      authRepository.requestResetPassword(args)
+  })
+
+  UserTC.addResolver({
+    name: 'resetPassword',
+    args: {
+      token: 'String',
+      password: 'String'
+    },
+    type: UserTC,
+    resolve: ({ args }) =>
+      authRepository.resetPassword(args)
+  })
+
+  UserTC.addResolver({
+    name: 'activateAccount',
+    args: {
+      token: 'String'
+    },
+    type: UserTC,
+    resolve: ({ args }) =>
+      authRepository.activateAccount(args)
+  })
+
+  UserTC.addResolver({
+    name: 'deactivateAccount',
+    args: {},
+    type: UserTC,
+    resolve: ({ context }) =>
+      authRepository.deactivateAccount(context)
+  })
+
+
+
+
+
+
+
+  schemaComposer
+    .rootQuery()
+    .addFields({
+      ...attachToAll(isAuthenticated)({
+        me: UserTC.getResolver('me')
+      })
+    })
+
+  schemaComposer
+    .rootMutation()
+    .addFields({
+      signUp: UserTC.getResolver('signUp'),
+      signIn: UserTC.getResolver('signIn'),
+      requestResetPassword: UserTC.getResolver('requestResetPassword'),
+      resetPassword: UserTC.getResolver('resetPassword'),
+      activateAccount: UserTC.getResolver('activateAccount'),
+      refreshToken: UserTC.getResolver('refreshToken'),
+      ...attachToAll(isAuthenticated)({
+        changePassword: UserTC.getResolver('changePassword'),
+        deactivateAccount: UserTC.getResolver('deactivateAccount')
+      })
+    })
 
   TC.UserTC = UserTC
+
   return UserTC
 }

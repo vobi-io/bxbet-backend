@@ -6,7 +6,7 @@
 var Utils = require('app/utils/Utils')
 // var Promise = require('bluebird')
 // var moment = require('moment')
-const roles = require('app/modules/roles/roles').roles
+const roles = require('../roles/roles').roles
 var config = require('app/config')
 var _ = require('lodash')
 // const mongoXlsx = require('mongo-xlsx');

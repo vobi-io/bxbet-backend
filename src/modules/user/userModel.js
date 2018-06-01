@@ -1,27 +1,26 @@
 /* eslint no-useless-escape:0 */
 /* eslint handle-callback-err:0 */
 
-var Promise = require('bluebird')
-var MyError = require('../../utils/responses/errors')
-var debug = require('debug')('vobi')
-var baseModelPlugin = require('../core/baseModelPlugin')
-var listRoles = require('../../modules/roles/roles').listRoles
-var config = require('app/config')
+const Promise = require('bluebird')
+const MyError = require('../../utils/responses/errors')
+const debug = require('debug')('vobi')
+const baseModelPlugin = require('../core/baseModelPlugin')
+const listRoles = require('../../modules/roles/roles').listRoles
 
-var categoryList = []
-var genres = []
+const categoryList = []
+const genres = []
 
 module.exports = (mongoose) => {
-  var Schema = mongoose.Schema
+  const Schema = mongoose.Schema
 
-  var userSchema = new Schema({
-    creationDate: {type: Date},
-    modified: {type: Date},
-    modifierUser: {type: Schema.Types.ObjectId, ref: 'User'},
-    firstName: {type: String},
-    lastName: {type: String},
+  const userSchema = new Schema({
+    creationDate: { type: Date },
+    modified: { type: Date },
+    modifierUser: { type: Schema.Types.ObjectId, ref: 'User' },
+    firstName: { type: String },
+    lastName: { type: String },
     description: { type: String }, // profile description
-    location: {type: String},
+    location: { type: String },
     birthDate: { type: Date },
     phone: { type: String },
     gender: { type: String },
@@ -29,16 +28,16 @@ module.exports = (mongoose) => {
       minRate: { type: Number },
       maxRate: { type: Number },
       depositRate: { type: Number },
-      minimumBooking: {type: Number},
-      cancellationPolicy: {type: Number},
+      minimumBooking: { type: Number },
+      cancellationPolicy: { type: Number },
       depositRequired: { type: Number },
 
-      numberOfRooms: {type: Number, default: 0},
-      flightTicket: {type: Number, default: 1},
-      buyReturnTicket: {type: Boolean, default: false},
-      isFoodAndBeverages: {type: Boolean},
-      foodAndBeverages: {type: String},
-      isPromoter: {type: Boolean, default: false}
+      numberOfRooms: { type: Number, default: 0 },
+      flightTicket: { type: Number, default: 1 },
+      buyReturnTicket: { type: Boolean, default: false },
+      isFoodAndBeverages: { type: Boolean },
+      foodAndBeverages: { type: String },
+      isPromoter: { type: Boolean, default: false }
     },
     socialLinks: {
       facebook: { type: String },
@@ -75,16 +74,16 @@ module.exports = (mongoose) => {
       activationToken: String,
       activationExpires: Date
     },
-    role: {type: String, default: 'User', enum: listRoles},
+    role: { type: String, default: 'User', enum: listRoles },
     invitation: {
-      invitedBy: {type: Schema.Types.ObjectId, ref: 'User'},
-      createDate: {type: Date}
+      invitedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+      createDate: { type: Date }
     },
-    status: {type: String, default: 'confirmed'},
-    avatar: {type: String},
-    passportPhoto: {type: String},
-    confirmed: {type: Boolean, default: false},
-    blockedUsers: [{type: Schema.Types.ObjectId, ref: 'User'}]
+    status: { type: String, default: 'confirmed' },
+    avatar: { type: String },
+    passportPhoto: { type: String },
+    confirmed: { type: Boolean, default: false },
+    blockedUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }]
   }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
@@ -98,7 +97,7 @@ module.exports = (mongoose) => {
 
   userSchema.plugin(baseModelPlugin)
 
-  userSchema.virtual('id').get(function() {
+  userSchema.virtual('id').get(function () {
     return this._id
   })
 
@@ -107,41 +106,31 @@ module.exports = (mongoose) => {
   // })
 
   // checking if password is valid
-  userSchema.methods.validatePassword = function(password) {
-    var bcrypt = require('bcrypt-nodejs')
+  userSchema.methods.validatePassword = function (password) {
+    const bcrypt = require('bcrypt-nodejs')
     return bcrypt.compareSync(password, this.password)
   }
 
-  userSchema.statics.findOneByAnyEmailOrUsername = function(email) {
+  userSchema.statics.findOneByAnyEmailOrUsername = function (email) {
     // Now by default we are setting user as active
-    return this.findOne()
+    return this
+      .findOne()
       .where('email').equals(email)
       .where('account.active').equals(true)
-      // .populate('company')
-      // .populate('team')
-      .then((user) => {
-        return Promise.resolve(user)
-      }).catch((err) => {
-        return Promise.reject(err)
-      })
   }
-  userSchema.statics.getByEmail = function(email) {
+  userSchema.statics.getByEmail = function (email) {
     // Now by default we are setting user as active
-    return this.findOne()
+    return this
+      .findOne()
       .where('email').equals(email)
-      .then((user) => {
-        return Promise.resolve(user)
-      }).catch((err) => {
-        return Promise.reject(err)
-      })
   }
   // checking if password is valid
   // userSchema.statics.validatePassword = function(password) {
-  //   var bcrypt = require('bcrypt-nodejs')
+  //   const bcrypt = require('bcrypt-nodejs')
   //   return bcrypt.compareSync(password, this.password)
   // }
 
-  userSchema.statics.generateInfo = function(user) {
+  userSchema.statics.generateInfo = function (user) {
     let userData = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -153,46 +142,55 @@ module.exports = (mongoose) => {
     let userInfo = JSON.stringify(userData)
     return userInfo
   }
-  userSchema.statics.findUserByToken = function(token) {
-    return this.findOne()
-        .where('account.activationToken').equals(token)
-        // REVIEW REOMVED CHECKING WITH EXPIRED DATE -> AFTER TALIKING TO CLIENT
-        // .where('account.activationExpires').gte(Date.now())
-        .then((user) => {
-          if (!user) return Promise.reject()
-          return Promise.resolve(user)
-        }).catch((err) => {
-          return Promise.reject(MyError.badRequest('User not found or token expired or already active!'))
-        })
-  }
-  userSchema.statics.findUserByPasswordToken = function(token) {
-    debug('findUserByPasswordToken', token)
-    return this.findOne()
-        .where('account.resetPasswordToken').equals(token)
-        .where('account.resetPasswordExpires').gte(Date.now())
-        .then((user) => {
-          if (!user) return Promise.reject()
-          return Promise.resolve(user)
-        }).catch((err) => {
-          return Promise.reject(MyError.badRequest('User not found or password reset token expired!'))
-        })
-  }
 
-  // check if user email already exists in company
-  userSchema.statics.checkIfEmailExist = function(email, id) {
-    return this.findOne({email: email, _id: {$ne: id}})
-      .exec()
+  userSchema.statics.findUserByToken = function (token) {
+    return this.findOne()
+      .where('account.activationToken').equals(token)
+      // REVIEW REOMVED CHECKING WITH EXPIRED DATE -> AFTER TALIKING TO CLIENT
+      // .where('account.activationExpires').gte(Date.now())
       .then((user) => {
-        if (!user || !user._id) {
-          return Promise.resolve(MyError.notFound('User not found'))
-        }
-        // return Promise.reject(MyError.badRequest('User exists with this email'))
-        return Promise.reject(MyError.badRequest('User already joined!'))
+        if (!user) return Promise.reject()
+
+        return Promise.resolve(user)
+      }).catch((err) => {
+        return Promise.reject(
+          MyError.badRequest('User not found or token expired or already active!')
+        )
       })
   }
 
-  userSchema.methods.toJSON = function() {
-    var obj = this.toObject()
+  userSchema.statics.findUserByPasswordToken = function (token) {
+    debug('findUserByPasswordToken', token)
+
+    return this
+      .findOne()
+      .where('account.resetPasswordToken').equals(token)
+      .where('account.resetPasswordExpires').gte(Date.now())
+  }
+
+  // check if user email already exists in company
+  userSchema.statics.checkIfEmailExist = function (email, id) {
+    return this
+      .findOne({
+        email,
+        _id: { $ne: id }
+      })
+      .exec()
+      .then(user => {
+        if (!user || !user._id) {
+          return Promise.resolve(
+            MyError.notFound('User not found')
+          )
+        }
+        // return Promise.reject(MyError.badRequest('User exists with this email'))
+        return Promise.reject(
+          MyError.badRequest('User already joined!')
+        )
+      })
+  }
+
+  userSchema.methods.toJSON = function () {
+    const obj = this.toObject()
     if (obj.account) {
       // set active at root
       obj.active = obj.account.active
@@ -206,8 +204,8 @@ module.exports = (mongoose) => {
     return obj
   }
 
-  userSchema.methods.toJSONWithoutId = function() {
-    var obj = this.toObject()
+  userSchema.methods.toJSONWithoutId = function () {
+    const obj = this.toObject()
     // set active at root
     if (obj.account) {
       // set active at root

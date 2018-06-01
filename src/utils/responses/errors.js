@@ -1,5 +1,5 @@
 'use strict'
-var debug = require('debug')('bxbet')
+var debug = require('debug')('bookinggenius')
 
 class MyError {
   constructor () {
