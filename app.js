@@ -27,14 +27,10 @@ app.use(bodyParser.json({limit: '10mb'}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: false}))
 
 app.set('view engine', 'ejs')
-// app.set('views', path.join(__dirname, '/app/views'))
-
-// app.use(bodyParser.json({limit: '10mb'}))
-// app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
-// app.use(upload)
+
 // load config
 app.set('configuration', require('./src/config'))
 
