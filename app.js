@@ -54,7 +54,7 @@ app.map = function(a, route) {
   }
 }
 
-var debug = require('debug')('walkthru')
+var debug = require('debug')('bxbet')
 debug('Server run')
 
 require('./src/modules')(app)
