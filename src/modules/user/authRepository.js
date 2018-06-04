@@ -1,12 +1,12 @@
 /* eslint handle-callback-err:0 */
 'use strict'
 
-const MyError = require('../../utils/responses/errors')
-const Utils = require('../../utils/Utils')
+const MyError = require('app/utils/responses/errors')
+const Utils = require('app/utils/Utils')
 const appConfig = require('app/config')
 const roles = require('app/modules/roles/roles').roles
-const MailService = require('../../services/sendgrid/sendgridSevice')
-const jwtService = require('../../services/jwtService')
+const MailService = require('app/services/sendgrid/sendgridSevice')
+const jwtService = require('app/services/jwtService')
 const Promise = require('bluebird')
 
 class AuthRepository {

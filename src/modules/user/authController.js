@@ -1,8 +1,8 @@
 /* eslint camelcase:0 */
 // var AuthRepository = require('./authRepository')
-var MailService = require('../../services/sendgrid/sendgridSevice')
-var Utils = require('../../utils/Utils')
-var roles = require('../roles/roles').roles
+var MailService = require('app/services/sendgrid/sendgridSevice')
+var Utils = require('app/utils/Utils')
+var roles = require('app/roles/roles').roles
 
 class AuthController {
   constructor ({db, authRepository}) {

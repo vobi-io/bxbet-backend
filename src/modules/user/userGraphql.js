@@ -5,9 +5,9 @@ const {
 } = require('graphql-compose-mongoose/node8')
 const {
   isAuthenticated,
-  attachToAll,
+  attachToAll
 
-} = require('../core/graphql')
+} = require('app/modules/core/graphql')
 
 module.exports = ({
   UserModel,
@@ -25,7 +25,6 @@ module.exports = ({
   const UserTC = composeWithMongoose(UserModel, {})
 
   UserTC.removeField(['password', '__v', 'account'])
-
 
   UserTC.addResolver({
     name: 'me',
@@ -118,12 +117,6 @@ module.exports = ({
     resolve: ({ context }) =>
       authRepository.deactivateAccount(context)
   })
-
-
-
-
-
-
 
   schemaComposer
     .rootQuery()
