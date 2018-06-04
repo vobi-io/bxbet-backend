@@ -24,21 +24,6 @@ module.exports = (mongoose) => {
     birthDate: { type: Date },
     phone: { type: String },
     gender: { type: String },
-    bookingInfo: {
-      minRate: { type: Number },
-      maxRate: { type: Number },
-      depositRate: { type: Number },
-      minimumBooking: { type: Number },
-      cancellationPolicy: { type: Number },
-      depositRequired: { type: Number },
-
-      numberOfRooms: { type: Number, default: 0 },
-      flightTicket: { type: Number, default: 1 },
-      buyReturnTicket: { type: Boolean, default: false },
-      isFoodAndBeverages: { type: Boolean },
-      foodAndBeverages: { type: String },
-      isPromoter: { type: Boolean, default: false }
-    },
     socialLinks: {
       facebook: { type: String },
       twitter: { type: String },
@@ -75,15 +60,9 @@ module.exports = (mongoose) => {
       activationExpires: Date
     },
     role: { type: String, default: 'User', enum: listRoles },
-    invitation: {
-      invitedBy: { type: Schema.Types.ObjectId, ref: 'User' },
-      createDate: { type: Date }
-    },
     status: { type: String, default: 'confirmed' },
     avatar: { type: String },
-    passportPhoto: { type: String },
-    confirmed: { type: Boolean, default: false },
-    blockedUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    confirmed: { type: Boolean, default: false }
   }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },

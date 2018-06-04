@@ -4,6 +4,7 @@
 const MyError = require('../../utils/responses/errors')
 const Utils = require('../../utils/Utils')
 const appConfig = require('app/config')
+const roles = require('app/modules/roles/roles').roles
 const MailService = require('../../services/sendgrid/sendgridSevice')
 const jwtService = require('../../services/jwtService')
 const Promise = require('bluebird')
@@ -15,6 +16,9 @@ class AuthRepository {
 
   signUp ({ email, password, role }) {
     const { UserModel } = this.db
+    if (!role) {
+      role = roles.user
+    }
 
     return UserModel
       .checkIfEmailExist(email)

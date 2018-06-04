@@ -3,7 +3,7 @@ module.exports = {
   roles: {
     superAdmin: 'superAdmin',
     admin: 'admin',
-    talent: 'user'
+    user: 'user'
   },
   listRoles: ['superAdmin', 'admin', 'user'],
   permissions: {
