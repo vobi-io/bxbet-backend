@@ -2,7 +2,7 @@
 // var AuthRepository = require('./authRepository')
 var MailService = require('app/services/sendgrid/sendgridSevice')
 var Utils = require('app/utils/Utils')
-var roles = require('app/roles/roles').roles
+var roles = require('app/modules/roles/roles').roles
 
 class AuthController {
   constructor ({db, authRepository}) {
