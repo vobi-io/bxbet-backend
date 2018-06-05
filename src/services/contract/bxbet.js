@@ -3,9 +3,14 @@ var config = require('app/config')
 var bxBetArtifacts = require('../../../build/contracts/BXBet.json')
 var contract = require('truffle-contract')
 var Web3 = require('Web3')
-var provider = new Web3.providers.HttpProvider(config.contract.network)
+
+const getProvider = () => {
+  console.log('aaaaaa', Web3.currentProvider)
+  return Web3.currentProvider || new Web3.providers.HttpProvider(config.contract.network)
+}
+
 var bxBet = contract(bxBetArtifacts)
-bxBet.setProvider(provider)
+bxBet.setProvider(getProvider())
 
 const eventListener = (eventName, callback) => {
   let event
