@@ -35,7 +35,8 @@ module.exports = (app) => {
   var controllers = [
     'user',
     'helpers',
-    'event',
+    'game',
+    'contract'
   ]
 
   var mongoose = require('./db')(app.get('configuration').database.connection, 'Main')

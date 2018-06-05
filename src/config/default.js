@@ -8,6 +8,9 @@ module.exports = {
   database: {
     connection: 'mongodb://localhost:27017/bxbet'
   },
+  contract: {
+    network: 'http://localhost:8545'
+  },
   google: {
     projectId: 'test',
     credentials: {

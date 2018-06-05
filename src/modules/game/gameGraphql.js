@@ -2,11 +2,11 @@
 var { composeWithMongoose } = require('graphql-compose-mongoose/node8')
 const customizationOptions = {} // left it empty for simplicity, described below
 
-module.exports = ({EventModel, isAuthenticated, TC}) => {
+module.exports = ({GameModel, isAuthenticated, TC}) => {
   const {schemaComposer, UserTC} = TC
-  const EventTC = composeWithMongoose(EventModel, customizationOptions)
+  const GameTC = composeWithMongoose(GameModel, customizationOptions)
 
-  EventTC.addRelation('userObj',
+  GameTC.addRelation('userObj',
     {
       resolver: () => UserTC.getResolver('findById'),
       prepareArgs: {
@@ -27,8 +27,8 @@ module.exports = ({EventModel, isAuthenticated, TC}) => {
   // extendedResolver.name = 'findMany'
   // ProductTC.addResolver(extendedResolver)
 
-  // EventTC.addRelation('last10Articles', {
-  //   resolver: () => EventTC.getResolver('findMany'),
+  // GameTC.addRelation('last10Articles', {
+  //   resolver: () => GameTC.getResolver('findMany'),
   //   prepareArgs: {
   //     filter: source => ({ userId: `${source._id}` }), // calculate `filter` argument
   //     limit: 10, // set value to `limit` argument
@@ -38,7 +38,7 @@ module.exports = ({EventModel, isAuthenticated, TC}) => {
   //   projection: { _id: true }
   // })
 
-  // const findManyResolver = EventTC.getResolver('findMany').addFilterArg({
+  // const findManyResolver = GameTC.getResolver('findMany').addFilterArg({
   //   name: 'fullTextSearch',
   //   type: 'String',
   //   description: 'Fulltext search with mongodb stemming and weights',
@@ -50,7 +50,7 @@ module.exports = ({EventModel, isAuthenticated, TC}) => {
   //     rp.projection.score = { $meta: 'textScore' }
   //   }
   // })
-  // EventTC.setResolver('findMany1', findManyResolver)
+  // GameTC.setResolver('findMany1', findManyResolver)
 
   const findResolverByUser = next => rp => {
     const { user } = rp.context
@@ -85,25 +85,25 @@ module.exports = ({EventModel, isAuthenticated, TC}) => {
   }
 
   schemaComposer.rootQuery().addFields({
-    eventById: EventTC.getResolver('findById').wrapResolve(findByIdResolverByUser),
-    eventByIds: EventTC.get('$findByIds'),
-    eventOne: EventTC.get('$findOne').wrapResolve(findResolverByUser),
-    eventMany: EventTC.get('$findMany').wrapResolve(findResolverByUser),
-    eventCount: EventTC.get('$count'),
-    eventConnection: EventTC.get('$connection'),
-    eventPagination: EventTC.get('$pagination')
+    gameById: GameTC.getResolver('findById').wrapResolve(findByIdResolverByUser),
+    gameByIds: GameTC.get('$findByIds'),
+    gameOne: GameTC.get('$findOne').wrapResolve(findResolverByUser),
+    gameMany: GameTC.get('$findMany').wrapResolve(findResolverByUser),
+    gameCount: GameTC.get('$count'),
+    gameConnection: GameTC.get('$connection'),
+    gamePagination: GameTC.get('$pagination')
   })
 
   schemaComposer.rootMutation().addFields({
-    eventCreate: EventTC.getResolver('createOne').wrapResolve(createOneWithUser),
-    eventUpdateById: EventTC.getResolver('updateById'),
-    eventUpdateOne: EventTC.getResolver('updateOne'),
-    eventUpdateMany: EventTC.getResolver('updateMany'),
-    eventRemoveById: EventTC.getResolver('removeById'),
-    eventRemoveOne: EventTC.getResolver('removeOne'),
-    eventRemoveMany: EventTC.getResolver('removeMany')
+    gameCreate: GameTC.getResolver('createOne').wrapResolve(createOneWithUser),
+    gameUpdateById: GameTC.getResolver('updateById'),
+    gameUpdateOne: GameTC.getResolver('updateOne'),
+    gameUpdateMany: GameTC.getResolver('updateMany'),
+    gameRemoveById: GameTC.getResolver('removeById'),
+    gameRemoveOne: GameTC.getResolver('removeOne'),
+    gameRemoveMany: GameTC.getResolver('removeMany')
   })
 
-  TC.EventTC = EventTC
-  return EventTC
+  TC.GameTC = GameTC
+  return GameTC
 }

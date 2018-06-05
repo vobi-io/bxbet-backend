@@ -53,10 +53,9 @@ contract BXBet is Owned, Balance {
         gameIndex = 0;
     }
 
-    event AddGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category, uint _startDate, uint _endDate);
+    event AddGameEvent(uint gameId, string title, string team1, string team2, string category, uint startDate, uint endDate, uint status, address owner);
 
-
-    event FinishGameEvent(uint _gameId, string _title, string _team1, string _team2, string _category, uint _startDate, uint _endDate, uint _status, address owner);
+    event FinishGameEvent(uint gameId, string title, string team1, string team2, string category, uint startDate, uint endDate, uint status, address owner);
 
     function addGame(
         string _title, string _team1, string _team2, string _category,
@@ -67,7 +66,7 @@ contract BXBet is Owned, Balance {
         Game memory game = Game(gameIndex, _title, _team1, _team2, _category,  _startDate, _endDate, GameStatus(status), msg.sender, 0, 0);
         games[gameIndex] = game;
 
-        emit AddGameEvent(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate);
+        emit AddGameEvent(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate, status, msg.sender);
     }
 
     function getGame(uint _gameId) view public returns (uint, string, string, string, string, uint, uint, GameStatus, address, uint, uint) {

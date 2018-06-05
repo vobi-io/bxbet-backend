@@ -1,23 +1,23 @@
 
 const getRepository = (db) => {
-  var EventRepository = require('./eventRepository')
-  return new EventRepository({db})
+  var GameRepository = require('./gameRepository')
+  return new GameRepository({db})
 }
 
 const getCtrl = (db) => {
-  var EventController = require('./eventController')
-  return new EventController({db, eventRepository: getRepository(db)})
+  var GameController = require('./gameController')
+  return new GameController({db, gameRepository: getRepository(db)})
 }
 
 const getRouteV1 = (db) => {
   var isAuthenticated = require('../../policies/isAuthenticated')
-  let RouteV1 = require('./eventRoutes.v1')
+  let RouteV1 = require('./gameRoutes.v1')
   return RouteV1({isAuthenticated, ctrl: getCtrl(db)})
 }
 
 const getGraphql = ({db, TC}) => {
   const { isAuthenticated } = require('../../policies/graphqlAuth')
-  require('./eventGraphql')({ EventModel: db.EventModel, isAuthenticated, TC })
+  require('./gameGraphql')({ GameModel: db.GameModel, isAuthenticated, TC })
 }
 
 module.exports = {
@@ -27,6 +27,6 @@ module.exports = {
   getGraphql,
   getRoute: (db) => null,
   initModel: (db, mongoose) => {
-    db.EventModel = require('./eventModel')(mongoose)
+    db.GameModel = require('./gameModel')(mongoose)
   }
 }
