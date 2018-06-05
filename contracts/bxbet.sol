@@ -77,7 +77,6 @@ contract BXBet is Owned, Balance {
 
 
     function finishBuyOrders(uint _gameId, uint outcome) private {
-
         Game storage game = games[_gameId];
         for(uint i = 0; i < game.totalBuyOrders; i++) {
             Order storage order = game.buyOrders[i];
@@ -158,8 +157,9 @@ contract BXBet is Owned, Balance {
         return true;
     }
 
-    function signUp(uint _amount) public {
+    function takeFreeTokens(uint _amount) public returns (bool) {
         Wallet memory wallet = Wallet(_amount, msg.sender, 0);
         balanceOf[msg.sender] = wallet;
+        return true
     }
 }

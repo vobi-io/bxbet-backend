@@ -9,6 +9,6 @@ module.exports = {
     var bxBet = require('./bxbet')
     var gameRepository = require('app/modules/game').getRepository(db)
 
-    bxBet.setupGameEventListener(gameRepository.saveGame)
+    bxBet.gameEventListener(gameRepository.saveGame)
   }
 }
