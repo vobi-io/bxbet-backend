@@ -35,7 +35,8 @@ module.exports = (app) => {
   var controllers = [
     'user',
     'helpers',
-    'game'
+    'game',
+    'order'
   ]
 
   var mongoose = require('./db')(app.get('configuration').database.connection, 'Main')
@@ -85,4 +86,9 @@ module.exports = (app) => {
     }
     res.status(500).json(response)
   })
+
+  setTimeout(() => {
+    var test = require('app/services/contract/seed')
+    test.seed()
+  }, 5000)
 }

@@ -57,9 +57,11 @@ contract BXBet is Owned, Balance {
 
     event FinishGameEvent(uint gameId, string title, string team1, string team2, string category, uint startDate, uint endDate, uint status, address owner);
 
+    event PlaceOrderEvent(uint _orderId, address player, uint gameId, OrderType orderType, uint amount, uint odd, uint outcome, uint status, uint matchedOrderId);
+
     function addGame(
         string _title, string _team1, string _team2, string _category,
-        uint _startDate, uint _endDate,  uint status) public {
+        uint _startDate, uint _endDate,  uint status) public returns (uint){
         // require (now > _startDate);
         require (_startDate < _endDate);
         gameIndex += 1;
@@ -67,6 +69,7 @@ contract BXBet is Owned, Balance {
         games[gameIndex] = game;
 
         emit AddGameEvent(gameIndex, _title, _team1, _team2, _category, _startDate, _endDate, status, msg.sender);
+        return gameIndex;
     }
 
     function getGame(uint _gameId) view public returns (uint, string, string, string, string, uint, uint, GameStatus, address, uint, uint) {
@@ -140,7 +143,7 @@ contract BXBet is Owned, Balance {
         return newOrder;
     }
 
-    function placeOrder(uint _gameId,  uint _orderType, uint _amount, uint _odd, uint _outcome) payable public returns (bool) {
+    function placeOrder(uint _gameId,  uint _orderType, uint _amount, uint _odd, uint _outcome) payable public returns (uint) {
         Game storage game = games[_gameId];
         // require (now < game.startDate);
         uint newId = game.totalBuyOrders + game.totalSellOrders;
@@ -154,7 +157,11 @@ contract BXBet is Owned, Balance {
             newOrder = checkSellMatched(_gameId, newOrder);
             game.sellOrders[game.totalSellOrders - 1] = newOrder;
         }
-        return true;
+
+        emit PlaceOrderEvent(newOrder.id, newOrder.player, newOrder.gameId,
+          newOrder.orderType, newOrder.amount, newOrder.odd, uint(newOrder.outcome), uint(newOrder.status), newOrder.matchedOrderId);
+
+        return newOrder.id;
     }
 
     function takeFreeTokens(uint _amount) public returns (bool) {

@@ -1,6 +1,3 @@
-const typeList = ['Football', 'News']
-const categoryList = ['Football', 'Basketball', 'Tennis', 'hokey']
-
 module.exports = (mongoose) => {
   let Schema = mongoose.Schema
 
@@ -16,9 +13,7 @@ module.exports = (mongoose) => {
     owner: {type: String},
     totalBuyOrders: {type: Number, default: 0},
     totalSellOrders: {type: Number, default: 0},
-    date: {type: Date, description: 'Event date'},
-    user: {type: Schema.Types.ObjectId, ref: 'User', description: 'Event creator', index: true},
-    modifierUser: {type: Schema.Types.ObjectId, ref: 'User'},
+
     created: {type: Date, default: Date.now},
     modified: {type: Date}
   }, {})
