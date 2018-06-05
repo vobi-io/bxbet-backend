@@ -7,7 +7,7 @@ var provider = new Web3.providers.HttpProvider(config.contract.network)
 var bxBet = contract(bxBetArtifacts)
 bxBet.setProvider(provider)
 
-const setupEventListener = (eventName, callback) => {
+const eventListener = (eventName, callback) => {
   let event
   bxBet.deployed().then((i) => {
     event = i[eventName]({ fromBlock: 0, toBlock: 'latest' })
@@ -51,8 +51,8 @@ const mutation = async (functionName, ...args) => {
 }
 
 // events
-const addGameEvent = (saveGame) => setupEventListener('AddGameEvent', saveGame)
-const finishGameEvent = (saveGame) => setupEventListener('FinishGameEvent', saveGame)
+const addGameEvent = (saveGame) => eventListener('AddGameEvent', saveGame)
+const finishGameEvent = (saveGame) => eventListener('FinishGameEvent', saveGame)
 
 // query
 const getGame = (_gameId) => query('getGame', _gameId)

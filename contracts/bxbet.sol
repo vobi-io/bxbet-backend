@@ -160,6 +160,6 @@ contract BXBet is Owned, Balance {
     function takeFreeTokens(uint _amount) public returns (bool) {
         Wallet memory wallet = Wallet(_amount, msg.sender, 0);
         balanceOf[msg.sender] = wallet;
-        return true
+        return true;
     }
 }
