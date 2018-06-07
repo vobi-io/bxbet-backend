@@ -86,9 +86,4 @@ module.exports = (app) => {
     }
     res.status(500).json(response)
   })
-
-  setTimeout(() => {
-    var test = require('app/services/contract/seed')
-    test.seed()
-  }, 5000)
 }

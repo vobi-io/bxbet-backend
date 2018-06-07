@@ -16,6 +16,10 @@
 ``` truffle migrate --reset ```
 
 
+
+#### Seed fakes games
+``` npm run seed:games --10```
+
 Run Test mode
 -----------
 ```shell
