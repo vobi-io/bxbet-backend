@@ -1,17 +1,24 @@
 /* eslint handle-callback-err:0 */
 'use strict'
-var { placeOrderEvent } = require('app/services/contract')
+var { OrderEvent, getGame: getGameFromBlockChain } = require('app/services/contract')
+var gameModule = require('app/modules/game')
 
 class OrderRepository {
   constructor ({db}) {
     this.db = db
     this.saveOrder = this.saveOrder.bind(this)
-    placeOrderEvent(this.saveOrder)
+    OrderEvent(this.saveOrder)
+    this.gameRepository = gameModule.getRepository(this.db)
   }
 
   async saveOrder (schema) {
     try {
-      let order = await this.db.OrderModel.findOne({orderId: Number(schema.orderId)})
+      const orderId = Number(schema.orderId)
+      const gameId = Number(schema.gameId)
+      let order = await this.db.OrderModel.findOne({orderId: orderId})
+      let gameFromBl = await getGameFromBlockChain(gameId)
+      const game = await this.gameRepository.saveGame(gameFromBl)
+      schema.game = game
       if (order) {
         order.set(schema)
         await order.save()

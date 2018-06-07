@@ -20,7 +20,7 @@ global.web3.eth.getAccounts(function (error, accounts) {
   if (error) {
     console.error(error)
   }
-  console.log(accounts)
+  // console.log(accounts)
 })
 
 const eventListener = (eventName, callback) => {
@@ -60,19 +60,39 @@ const mutation = async (functionName, ...args) => {
 }
 
 // events
-const addGameEvent = (saveGame) => eventListener('AddGameEvent', saveGame)
+const GameEvent = (saveGame) => eventListener('GameEvent', saveGame)
 const finishGameEvent = (saveGame) => eventListener('FinishGameEvent', saveGame)
-const placeOrderEvent = (saveGame) => eventListener('PlaceOrderEvent', saveGame)
+const OrderEvent = (saveGame) => eventListener('OrderEvent', saveGame)
 
 // query
-const getGame = (_gameId) => query('getGame', _gameId)
+const getGame = (_gameId) => query('getGame', _gameId).then(g => Promise.resolve({
+  gameId: Number(g[0]),
+  title: g[1],
+  team1: g[2],
+  team2: g[3],
+  category: g[4],
+  startDate: Number(g[5]),
+  endDate: Number([6]),
+  status: Number([7]),
+  owner: Number([8]),
+  totalOrders: Number([9])
+}))
 const getOrderById = (_gameId, _orderId) => query('getOrderById', _gameId, _orderId)
 
 // mutation
 const addGame = (_title, _team1, _team2, _category, _startDate, _endDate, status) =>
    mutation('addGame', _title, _team1, _team2, _category, _startDate, _endDate, status)
 
-const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome) => mutation('placeOrder', _gameId, _orderType, _amount, _odd, _outcome)
+  /**
+  *
+  * @param {Number} _gameId
+  * @param {Number} _orderType (0 -Buy, 1 -Sell)
+  * @param {Number} _amount
+  * @param {Number} _odd
+  * @param {Number} _outcome (0 - Draw, 1- One, 2- Two)
+  */
+const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome) => mutation('placeOrder', _gameId,
+                                                          _orderType, _amount, _odd, _outcome)
 const takeFreeTokens = (_amount) => mutation('takeFreeTokens', _amount)
 
 /**
@@ -83,13 +103,13 @@ const createAccount = () => {
 }
 
 module.exports = {
-  addGameEvent,
+  GameEvent,
   finishGameEvent,
   getGame,
   placeOrder,
   takeFreeTokens,
   getOrderById,
-  placeOrderEvent,
+  OrderEvent,
   createAccount,
   addGame
 }

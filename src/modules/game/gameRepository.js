@@ -1,12 +1,15 @@
 /* eslint handle-callback-err:0 */
 'use strict'
-var { addGameEvent } = require('app/services/contract')
+var { GameEvent } = require('app/services/contract')
 
 class GameRepository {
   constructor ({db}) {
     this.db = db
     this.saveGame = this.saveGame.bind(this)
-    addGameEvent(this.saveGame)
+    GameEvent(this.saveGame)
+  }
+  async getGame (gameId) {
+    return this.db.GameModel.findOne({gameId: gameId})
   }
 
   async saveGame (schema) {

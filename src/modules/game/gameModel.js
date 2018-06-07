@@ -11,9 +11,7 @@ module.exports = (mongoose) => {
     endDate: {type: Number},
     status: {type: Number},
     owner: {type: String},
-    totalBuyOrders: {type: Number, default: 0},
-    totalSellOrders: {type: Number, default: 0},
-
+    totalOrders: {type: Number, default: 0},
     created: {type: Date, default: Date.now},
     modified: {type: Date}
   }, {})

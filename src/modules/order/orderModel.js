@@ -6,6 +6,7 @@ module.exports = (mongoose) => {
     orderId: {type: Number},
     player: {type: String},
     gameId: {type: Number},
+    game: { type: Schema.Types.ObjectId, ref: 'Game' },
     orderType: {type: Number},
     amount: {type: Number},
     odd: {type: Number},

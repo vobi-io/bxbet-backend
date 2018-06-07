@@ -33,6 +33,7 @@
     "apidoc": "apidoc -i app -o public/doc",
     "test": "NODE_ENV=test mocha --timeout 10000",
     "seed:games": "DEBUG=* node cli/seeds/games.js seed:games",
+    "seed:orders": "DEBUG=* node cli/seeds/orders.js seed:orders",
     "postinstall": "node -e \"var s=['../src'],d=['node_modules/app'],fs=require('fs');s.forEach(function(_,i){fs.existsSync(d[i])||fs.symlinkSync(s[i],d[i],'dir')});\""
   },
   "dependencies": {
