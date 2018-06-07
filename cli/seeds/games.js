@@ -43,7 +43,6 @@ const seedData = async (number) => {
       return addGame(title, team1, team2, 'Football', startDate, endDate, 0)
     })
     const results = await Promise.all(users)
-    console.log(results)
     exit(`Successfully seeded ${results.length} games`)
   } catch (e) {
     error(e.message)
