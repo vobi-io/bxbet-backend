@@ -103,9 +103,9 @@ contract BXBet is Owned, Balance {
         game.status = GameStatus.Finished;
     }
 
-    function getOrderById(uint _gameId, uint _orderId) view public returns (address, uint, OrderType, uint, uint, OrderOutcome) {
+    function getOrderById(uint _gameId, uint _orderId) view public returns (uint, address, uint, OrderType, uint, uint, OrderOutcome, OrderStatus, uint) {
         Order memory order = games[_gameId].orders[_orderId];
-        return (order.player, order.gameId, order.orderType, order.amount, order.odd, order.outcome);
+        return (order.id, order.player, order.gameId, order.orderType, order.amount, order.odd, order.outcome, order.status, order.matchedOrderId);
     }
 
     function checkSellMatched(uint _gameId, Order newOrder) private returns(Order){
@@ -145,13 +145,14 @@ contract BXBet is Owned, Balance {
         Game storage game = games[_gameId];
         // require (now < game.startDate);
 
+
         uint newId = game.totalOrders;
         Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd, OrderOutcome(_outcome), OrderStatus.Open, None);
-        if (OrderType(_orderType) == OrderType.Buy){
-          newOrder = checkBuyMatched(_gameId, newOrder);
-        }else{
-          newOrder = checkSellMatched(_gameId, newOrder);
-        }
+        // if (OrderType(_orderType) == OrderType.Buy){
+        //   newOrder = checkBuyMatched(_gameId, newOrder);
+        // }else{
+        //   newOrder = checkSellMatched(_gameId, newOrder);
+        // }
         game.orders[newId] = newOrder;
         game.totalOrders += 1;
 

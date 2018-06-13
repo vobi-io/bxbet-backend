@@ -60,13 +60,12 @@ const mutation = async (functionName, ...args) => {
 }
 
 // events
-const GameEvent = (saveGame) => eventListener('GameEvent', saveGame)
-const finishGameEvent = (saveGame) => eventListener('FinishGameEvent', saveGame)
-const OrderEvent = (saveGame) => eventListener('OrderEvent', saveGame)
+const GameEvent = (cb) => eventListener('GameEvent', cb)
+const finishGameEvent = (cb) => eventListener('FinishGameEvent', cb)
+const OrderEvent = (cb) => eventListener('OrderEvent', cb)
 
 // query
 const getGame = (_gameId) => query('getGame', Number(_gameId)).then(g => {
-  console.log(g)
   return Promise.resolve({
     gameId: Number(g[0]),
     title: g[1],
@@ -74,13 +73,25 @@ const getGame = (_gameId) => query('getGame', Number(_gameId)).then(g => {
     team2: g[3],
     category: g[4],
     startDate: Number(g[5]),
-    endDate: Number([6]),
-    status: Number([7]),
-    owner: Number([8]),
-    totalOrders: Number([9])
+    endDate: Number(g[6]),
+    status: Number(g[7]),
+    owner: g[8],
+    totalOrders: Number(g[9])
   })
 })
-const getOrderById = (_gameId, _orderId) => query('getOrderById', _gameId, _orderId)
+const getOrderById = (_gameId, _orderId) => query('getOrderById', _gameId, _orderId).then(g => {
+  return Promise.resolve({
+    orderId: Number(g[0]),
+    player: g[1],
+    gameId: Number(g[2]),
+    orderType: Number(g[3]),
+    amount: Number(g[4]),
+    odd: Number(g[5]),
+    outcome: Number(g[6]),
+    status: Number(g[7]),
+    matchedOrderId: Number(g[8])
+  })
+})
 
 // mutation
 const addGame = (_title, _team1, _team2, _category, _startDate, _endDate, status) =>
