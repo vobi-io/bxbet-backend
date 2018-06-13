@@ -26,7 +26,6 @@ class OrderRepository {
     try {
       const orderId = Number(schema.orderId)
       const gameId = Number(schema.gameId)
-      console.log('order', orderId)
 
       let gameFromBl = await getGameFromBlockChain(gameId)
       const game = await this.gameRepository.saveGame(gameFromBl)
