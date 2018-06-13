@@ -37,14 +37,13 @@ program
 const seedData = async (number) => {
   try {
     const users = times(number, async () => {
-      // const gameId = faker.random.number({ min: 1, max: 10 })
-      const gameId = 3
+      const gameId = faker.random.number({ min: 1, max: 9 })
+      // const gameId = 3
       const orderType = faker.random.number({ min: 0, max: 1 })
-      const amount = faker.random.number({ min: 50, max: 100 })
+      const amount = faker.random.number({ min: 50, max: 55 })
       const outcome = faker.random.number({ min: 0, max: 2 })
       const odd = faker.random.number({ min: 1, max: 2 })
       const dtNow = Math.round(new Date() / 1000)
-      console.log(gameId, orderType, amount, odd, outcome, dtNow)
       return placeOrder(gameId, orderType, amount, odd, outcome, dtNow)
     })
     const results = await Promise.all(users)

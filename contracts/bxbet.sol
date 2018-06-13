@@ -108,27 +108,12 @@ contract BXBet is Owned, Balance {
         return (order.id, order.player, order.gameId, order.orderType, order.amount, order.odd, order.outcome, order.status, order.matchedOrderId);
     }
 
-    function checkSellMatched(uint _gameId, Order newOrder) private returns(Order){
+    function checkMatched(uint _gameId, Order newOrder) private returns(Order){
         Game storage game = games[_gameId];
         for(uint i = 0; i < game.totalOrders; i++) {
             Order storage order = game.orders[i];
             if(order.amount == newOrder.amount &&
-              order.odd == newOrder.odd &&
-              order.outcome == newOrder.outcome &&
-              order.status == OrderStatus.Open) {
-                game.orders[i].status = OrderStatus.Matched;
-                game.orders[i].matchedOrderId = newOrder.id;
-                newOrder.matchedOrderId = order.id;
-                newOrder.status = OrderStatus.Matched;
-              }
-        }
-    }
-
-    function checkBuyMatched(uint _gameId, Order newOrder) private returns(Order){
-        Game storage game = games[_gameId];
-        for(uint i = 0; i < game.totalOrders; i++) {
-            Order memory order = game.orders[i];
-            if(order.amount == newOrder.amount &&
+              order.orderType != newOrder.orderType &&
               order.odd == newOrder.odd &&
               order.outcome == newOrder.outcome &&
               order.status == OrderStatus.Open) {
@@ -145,14 +130,9 @@ contract BXBet is Owned, Balance {
         Game storage game = games[_gameId];
         // require (now < game.startDate);
 
-
         uint newId = game.totalOrders;
         Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd, OrderOutcome(_outcome), OrderStatus.Open, None);
-        // if (OrderType(_orderType) == OrderType.Buy){
-        //   newOrder = checkBuyMatched(_gameId, newOrder);
-        // }else{
-        //   newOrder = checkSellMatched(_gameId, newOrder);
-        // }
+        newOrder = checkMatched(_gameId, newOrder);
         game.orders[newId] = newOrder;
         game.totalOrders += 1;
 

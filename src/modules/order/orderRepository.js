@@ -11,14 +11,14 @@ class OrderRepository {
     this.gameRepository = gameModule.getRepository(this.db)
 
     setTimeout(() => {
-      getGameFromBlockChain(3).then(i => {
-        console.log(i, 'aaaa')
+      // getGameFromBlockChain(3).then(i => {
+      //   console.log(i, 'aaaa')
 
-        getOrderById(3, 3).then(y => {
-          console.log(y)
-        })
-        // placeOrder(3, 1, 89, 1, 1, 1528892459)
-      })
+      //   getOrderById(3, 3).then(y => {
+      //     console.log(y)
+      //   })
+      //   // placeOrder(3, 1, 89, 1, 1, 1528892459)
+      // })
     }, 2000)
   }
 
