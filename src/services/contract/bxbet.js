@@ -65,18 +65,21 @@ const finishGameEvent = (saveGame) => eventListener('FinishGameEvent', saveGame)
 const OrderEvent = (saveGame) => eventListener('OrderEvent', saveGame)
 
 // query
-const getGame = (_gameId) => query('getGame', _gameId).then(g => Promise.resolve({
-  gameId: Number(g[0]),
-  title: g[1],
-  team1: g[2],
-  team2: g[3],
-  category: g[4],
-  startDate: Number(g[5]),
-  endDate: Number([6]),
-  status: Number([7]),
-  owner: Number([8]),
-  totalOrders: Number([9])
-}))
+const getGame = (_gameId) => query('getGame', Number(_gameId)).then(g => {
+  console.log(g)
+  return Promise.resolve({
+    gameId: Number(g[0]),
+    title: g[1],
+    team1: g[2],
+    team2: g[3],
+    category: g[4],
+    startDate: Number(g[5]),
+    endDate: Number([6]),
+    status: Number([7]),
+    owner: Number([8]),
+    totalOrders: Number([9])
+  })
+})
 const getOrderById = (_gameId, _orderId) => query('getOrderById', _gameId, _orderId)
 
 // mutation

@@ -9,7 +9,7 @@ contract BXBet is Owned, Balance {
     enum OrderType { Buy, Sell }
     enum OrderStatus { Open, Matched, Win, Lose, Closed }
     enum OrderOutcome {Draw, One, Two }
-    uint public gameIndex;
+    uint public totalGames;
     uint80 constant None = uint80(0);
 
     // We use the struct datatype to store the event information.
@@ -48,10 +48,10 @@ contract BXBet is Owned, Balance {
       uint256 initialSupply,
       string tokenName,
       string tokenSymbol ) Balance(initialSupply, tokenName, tokenSymbol) public {
-        gameIndex = 0;
+        totalGames = 0;
     }
 
-    event GameEvent(uint gameId, string title, string team1, string team2, string category, uint startDate, uint endDate, uint status, address owner, game.totalOrders);
+    event GameEvent(uint gameId, string title, string team1, string team2, string category, uint startDate, uint endDate, uint status, address owner, uint totalOrders);
 
     event OrderEvent(uint orderId, address player, uint gameId, OrderType orderType, uint amount, uint odd, uint outcome, uint status, uint matchedOrderId);
 
@@ -60,11 +60,13 @@ contract BXBet is Owned, Balance {
         uint _startDate, uint _endDate,  uint status) public returns (uint){
         // require (now > _startDate);
         require (_startDate < _endDate);
-        gameIndex += 1;
+        totalGames += 1;
+        uint gameIndex = totalGames - 1;
         Game memory game = Game(gameIndex, _title, _team1, _team2, _category,  _startDate, _endDate, GameStatus(status), msg.sender, 0);
         games[gameIndex] = game;
 
-        emit GameEvent(game.id, game.title, game.team1, game.team2, game.category, game.startDate, game.endDate, game.status, game.owner, game.totalOrders);
+        emit GameEvent(game.id, game.title, game.team1, game.team2, game.category, game.startDate, game.endDate, uint(game.status), game.owner, game.totalOrders);
+
         return gameIndex;
     }
 
@@ -143,7 +145,7 @@ contract BXBet is Owned, Balance {
         Game storage game = games[_gameId];
         // require (now < game.startDate);
 
-        uint newId = game.totalOrders + 1;
+        uint newId = game.totalOrders;
         Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd, OrderOutcome(_outcome), OrderStatus.Open, None);
         if (OrderType(_orderType) == OrderType.Buy){
           newOrder = checkBuyMatched(_gameId, newOrder);

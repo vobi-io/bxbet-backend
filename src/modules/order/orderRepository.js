@@ -15,17 +15,14 @@ class OrderRepository {
     try {
       const orderId = Number(schema.orderId)
       const gameId = Number(schema.gameId)
-      let order = await this.db.OrderModel.findOne({orderId: orderId})
       let gameFromBl = await getGameFromBlockChain(gameId)
       const game = await this.gameRepository.saveGame(gameFromBl)
-      schema.game = game
-      if (order) {
-        order.set(schema)
-        await order.save()
-      } else {
-        let newOrder = new this.db.OrderModel(schema)
-        order = await newOrder.save()
-      }
+      schema.game = game._id
+      await this.db.OrderModel.update(
+        {orderId: orderId},
+        schema,
+        {upsert: true, setDefaultsOnInsert: true})
+      let order = await this.db.OrderModel.findOne({orderId: orderId})
       return Promise.resolve(order)
     } catch (err) {
       return Promise.reject(err)
