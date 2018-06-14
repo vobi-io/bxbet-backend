@@ -79,19 +79,55 @@ contract BXBet is Owned, Balance {
             Order storage order = game.orders[i];
             if (order.status != OrderStatus.Closed) {
                 if (order.status == OrderStatus.Matched) {
-                    if (order.outcome == OrderOutcome(outcome)) {
-                        game.orders[i].status = OrderStatus.Win;
-                        game.orders[order.matchedOrderId].status = OrderStatus.Lose;
+                    //unblock tokens for this game
+                    unblockTokens(game.orders[i].player, game.orders[i].amount);
+                    unblockTokens(game.orders[order.matchedOrderId].player, game.orders[order.matchedOrderId].amount);
+
+                    uint amount = 0;
+                    if (order.orderType == OrderType.Buy){
+                        //if is Buy order
+                        amount = game.orders[i].odd * game.orders[i].amount;
+                        if (order.outcome == OrderOutcome(outcome)) {
+                            game.orders[i].status = OrderStatus.Win;
+                            game.orders[order.matchedOrderId].status = OrderStatus.Lose;
+                            address from = game.orders[order.matchedOrderId].player;
+                            address to = game.orders[i].player;
+                        }else{
+                            game.orders[i].status = OrderStatus.Lose;
+                            game.orders[order.matchedOrderId].status = OrderStatus.Win;
+                            address from = game.orders[i].player;
+                            address to = game.orders[order.matchedOrderId].player;
+                        }
                     } else {
-                        game.orders[i].status = OrderStatus.Lose;
-                        game.orders[order.matchedOrderId].status = OrderStatus.Win;
+                       // if is Sell order
+                       amount = game.orders[i].amount;
+                       if (order.outcome == OrderOutcome(outcome)) {
+                            game.orders[i].status = OrderStatus.Lose;
+                            game.orders[order.matchedOrderId].status = OrderStatus.Win;
+                            address from = game.orders[i].player;
+                            address to = game.orders[order.matchedOrderId].player;
+                       }else{
+                            game.orders[i].status = OrderStatus.Win;
+                            game.orders[order.matchedOrderId].status = OrderStatus.Lose;
+                            address from = game.orders[order.matchedOrderId].player;
+                            address to = game.orders[i].player;
+                       }
                     }
+
+                    //transfer money
+                    transferTokens(from, to, amount);
+
+                    //send order events
                     emitOrderEvent(game.orders[i]);
                     emitOrderEvent(game.orders[order.matchedOrderId]);
                 }
 
                 if(order.status == OrderStatus.Open) {
+                    //unblock tokens
+                    unblockTokens(game.orders[i].player, game.orders[i].amount);
+                    //update order status which is not matched as closed
                     game.orders[i].status = OrderStatus.Closed;
+                    //send event on this roder
                     emitOrderEvent(game.orders[i]);
                 }
             }
@@ -123,9 +159,17 @@ contract BXBet is Owned, Balance {
             uint newId = game.totalOrders;
             Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd,
                 OrderOutcome(_outcome), OrderStatus.Open, NONE);
+
+            //check matched
             newOrder = checkMatched(_gameId, newOrder);
 
+            //Block tokens for this orders
+            blockTokens(newOrder.player, newOrder.amount);
+
+            //save order
             game.orders[newId] = newOrder;
+
+            //increase orders number
             game.totalOrders += 1;
 
             emitOrderEvent(newOrder);
@@ -136,6 +180,10 @@ contract BXBet is Owned, Balance {
         Wallet memory wallet = Wallet(_amount, msg.sender, 0);
         balanceOf[msg.sender] = wallet;
         return true;
+    }
+
+    function calculateBlockAmount(Order order) private return (uint) {
+
     }
 
     function checkMatched(uint _gameId, Order newOrder) private returns(Order){
@@ -152,6 +200,8 @@ contract BXBet is Owned, Balance {
                 game.orders[i].matchedOrderId = newOrder.id;
                 newOrder.matchedOrderId = order.id;
                 newOrder.status = OrderStatus.Matched;
+
+                blockTokens(order.player, order.amount);
                 emitOrderEvent(order);
             }
         }

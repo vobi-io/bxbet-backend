@@ -66,8 +66,8 @@ contract Balance {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-    function transferTokens(address _to, uint256 _value) public {
-        _transferTokens(msg.sender, _to, _value);
+    function transferTokens(address _from, address _to, uint256 _value) public {
+        _transferTokens(_from, _to, _value);
     }
 
     /**
