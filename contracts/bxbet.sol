@@ -88,7 +88,9 @@ contract BXBet is Owned, Balance {
                     }
                     emitOrderEvent(game.orders[i]);
                     emitOrderEvent(game.orders[order.matchedOrderId]);
-                }else {
+                }
+
+                if(order.status == OrderStatus.Open) {
                     game.orders[i].status = OrderStatus.Closed;
                     emitOrderEvent(game.orders[i]);
                 }
