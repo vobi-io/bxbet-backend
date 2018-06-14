@@ -121,6 +121,11 @@ contract BXBet is Owned, Balance {
                 game.orders[i].matchedOrderId = newOrder.id;
                 newOrder.matchedOrderId = order.id;
                 newOrder.status = OrderStatus.Matched;
+
+                emit OrderEvent(order.id, order.player, order.gameId,
+                  order.orderType, order.amount, order.odd, uint(order.outcome),
+                  uint(order.status), order.matchedOrderId);
+                  break;
               }
         }
         return newOrder;
@@ -132,26 +137,8 @@ contract BXBet is Owned, Balance {
 
         uint newId = game.totalOrders;
         Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd, OrderOutcome(_outcome), OrderStatus.Open, None);
-        // newOrder = checkMatched(_gameId, newOrder);
-        for(uint i = 0; i < game.totalOrders; i++) {
-            Order storage order = game.orders[i];
-            if(order.amount == newOrder.amount &&
-              order.orderType != newOrder.orderType &&
-              order.odd == newOrder.odd &&
-              order.outcome == newOrder.outcome &&
-              order.status == OrderStatus.Open) {
-                game.orders[i].status = OrderStatus.Matched;
-                game.orders[i].matchedOrderId = newOrder.id;
-                newOrder.matchedOrderId = order.id;
-                newOrder.status = OrderStatus.Matched;
+        newOrder = checkMatched(_gameId, newOrder);
 
-                emit OrderEvent(order.id, order.player, order.gameId,
-                order.orderType, order.amount, order.odd, uint(order.outcome),
-                uint(order.status), order.matchedOrderId);
-                break;
-              }
-
-        }
         game.orders[newId] = newOrder;
         game.totalOrders += 1;
 
