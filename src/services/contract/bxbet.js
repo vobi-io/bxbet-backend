@@ -110,6 +110,13 @@ const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome) => mutation('p
 const takeFreeTokens = (_amount) => mutation('takeFreeTokens', _amount)
 
 /**
+ *
+ * @param {Number} gameId
+ * @param {Number} outcome (0 - Draw, 1- One, 2- Two)
+ */
+const finishGame = (gameId, outcome) => mutation('finishGame', gameId, outcome)
+
+/**
  * create Ethereum account
  */
 const createAccount = () => {
@@ -125,5 +132,6 @@ module.exports = {
   getOrderById,
   OrderEvent,
   createAccount,
+  finishGame,
   addGame
 }

@@ -34,6 +34,7 @@
     "test": "NODE_ENV=test mocha --timeout 10000",
     "seed:games": "DEBUG=* node cli/seeds/games.seed.js seed:games",
     "seed:orders": "DEBUG=* node cli/seeds/orders.seed.js seed:orders",
+    "finish:game": "DEBUG=* node cli/finishGame.js finish:game",
     "postinstall": "node -e \"var s=['../src'],d=['node_modules/app'],fs=require('fs');s.forEach(function(_,i){fs.existsSync(d[i])||fs.symlinkSync(s[i],d[i],'dir')});\""
   },
   "dependencies": {
