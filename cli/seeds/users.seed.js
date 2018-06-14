@@ -10,8 +10,8 @@ const config = require('../../src/config')
 const db = require('../../src/db')(config.database.connection, 'Main')
 const Utils = require('../../src/utils/Utils')
 const UserModel = require('../../src/modules/user/userModel')(db)
-const { listGenres } = require('../../src/modules/genres/genres')
-const { listCategories } = require('../../src/modules/categories/categories')
+const AuthRepository = require('../../src/modules/user/AuthRepository')
+const authRepository = new AuthRepository({db})
 
 const exit = message => {
   program.outputHelp(() => colors.green(message))
@@ -44,20 +44,16 @@ const seedData = async (number) => {
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         email: faker.internet.email(),
-        role: sample(['talent', 'booker', 'bookingAgent']),
-        category: sampleSize(listCategories, 2),
-        genres: sampleSize(listGenres, 2),
+        role: sample(['user']),
         password: Utils.generateHash('1234'),
         isVerified: true,
         confirmed: true,
         location: `${faker.address.city()}, ${faker.address.country()}`,
         birthDate: faker.date.between(new Date(1900, 1, 1), new Date(2000, 1, 1)),
-        phone: faker.phone.phoneNumber(),
-        bookingInfo: {
-          minRate: faker.random.number({ min: 100, max: 200 })
-        }
+        phone: faker.phone.phoneNumber()
       })
-      return user.save()
+      // return user.save()
+      return authRepository.signUp(user)
     })
     const results = await Promise.all(users)
     exit(`Successfully seeded ${results.length} users`)

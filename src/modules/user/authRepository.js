@@ -8,53 +8,47 @@ const roles = require('app/modules/roles/roles').roles
 const MailService = require('app/services/sendgrid/sendgridSevice')
 const jwtService = require('app/services/jwtService')
 const Promise = require('bluebird')
+var {takeFreeTokens, getBalance, createAccount, freeTokens} = require('app/services/contract')
 
 class AuthRepository {
   constructor ({ db }) {
     this.db = db
   }
 
-  signUp ({ email, password, role }) {
+  async signUp ({ email, password, role }) {
     const { UserModel } = this.db
     if (!role) {
       role = roles.user
     }
 
-    return UserModel
-      .checkIfEmailExist(email)
-      .then(() => {
-        const data = {
-          email,
-          password: Utils.generateHash(password),
-          account: {
-            activationToken: Utils.generateRandomHash(),
-            activationExpires: Date.now() +
-              appConfig.auth.activationTokenExpiresIn,
-            active: true
-          },
-          role: role //  default role
-        }
+    await UserModel.checkIfEmailExist(email)
 
-        return new UserModel(data)
-          .save()
-      })
-      .then(user =>
-        // send mail
-        MailService
-          .sendWelcomeEmail(user)
-          .then(() => user)
-      )
-      .then(user => {
-        const accessToken = jwtService(appConfig.jwt)
-          .sign({
-            id: user.id
-          })
+    const blockChain = await createAccount()
+    const data = {
+      email,
+      password: Utils.generateHash(password),
+      account: {
+        activationToken: Utils.generateRandomHash(),
+        activationExpires: Date.now() +
+          appConfig.auth.activationTokenExpiresIn,
+        active: true
+      },
+      role: role, //  default role
+      blockChain
+    }
+    const user = await (new UserModel(data)).save()
 
-        return {
-          accessToken: accessToken,
-          user: user.toJSONWithoutId()
-        }
-      })
+     // send mail
+    await MailService.sendWelcomeEmail(user)
+    const accessToken = jwtService(appConfig.jwt).sign({ id: user.id })
+
+    const result = await takeFreeTokens(blockChain.address)
+    console.log(result)
+
+    return Promise.resolve({
+      accessToken: accessToken,
+      user: user.toJSONWithoutId()
+    })
   }
 
   signIn ({ email, password, ip, device }) {

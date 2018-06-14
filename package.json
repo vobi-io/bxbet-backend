@@ -32,6 +32,7 @@
     "swagger": "apidoc-swagger -i app -o public/swagger",
     "apidoc": "apidoc -i app -o public/doc",
     "test": "NODE_ENV=test mocha --timeout 10000",
+    "seed:users": "DEBUG=* node cli/seeds/users.seed.js seed:users",
     "seed:games": "DEBUG=* node cli/seeds/games.seed.js seed:games",
     "seed:orders": "DEBUG=* node cli/seeds/orders.seed.js seed:orders",
     "finish:game": "DEBUG=* node cli/finishGame.js finish:game",

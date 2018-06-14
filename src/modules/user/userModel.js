@@ -62,7 +62,9 @@ module.exports = (mongoose) => {
     role: { type: String, default: 'User', enum: listRoles },
     status: { type: String, default: 'confirmed' },
     avatar: { type: String },
-    confirmed: { type: Boolean, default: false }
+    confirmed: { type: Boolean, default: false },
+    blockChain: {
+    }
   }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
