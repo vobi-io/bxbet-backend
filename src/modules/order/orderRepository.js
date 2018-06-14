@@ -34,7 +34,8 @@ class OrderRepository {
         {orderId, gameId},
         schema,
         {upsert: true, setDefaultsOnInsert: true})
-      let order = await this.db.OrderModel.findOne({orderId: orderId})
+
+      let order = await this.db.OrderModel.findOne({orderId})
       return Promise.resolve(order)
     } catch (err) {
       return Promise.reject(err)
