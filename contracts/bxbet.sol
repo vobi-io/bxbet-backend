@@ -44,9 +44,7 @@ contract BXBet is Owned, Balance {
      *
      * Initializes contract with initial supply tokens to the creator of the contract
      */
-    constructor(
-      uint256 initialSupply,
-      string tokenName,
+    constructor(uint256 initialSupply, string tokenName,
       string tokenSymbol ) Balance(initialSupply, tokenName, tokenSymbol) public {
         totalGames = 0;
     }
@@ -54,6 +52,20 @@ contract BXBet is Owned, Balance {
     event GameEvent(uint gameId, string title, string team1, string team2, string category, uint startDate, uint endDate, uint status, address owner, uint totalOrders);
 
     event OrderEvent(uint orderId, address player, uint gameId, OrderType orderType, uint amount, uint odd, uint outcome, uint status, uint matchedOrderId);
+
+
+    function emitOrderEvent(Order order) private {
+        emit OrderEvent(order.id, order.player, order.gameId,
+                    order.orderType, order.amount, order.odd, uint(order.outcome),
+                    uint(order.status), order.matchedOrderId);
+    }
+
+    function emitGameEvent(Game game) private {
+        emit GameEvent(game.id, game.title, game.team1, game.team2,
+            game.category, game.startDate, game.endDate, uint(game.status),
+            game.owner, game.totalOrders);
+    }
+
 
     function addGame(
         string _title, string _team1, string _team2, string _category,
@@ -65,7 +77,7 @@ contract BXBet is Owned, Balance {
         Game memory game = Game(gameIndex, _title, _team1, _team2, _category,  _startDate, _endDate, GameStatus(status), msg.sender, 0);
         games[gameIndex] = game;
 
-        emit GameEvent(game.id, game.title, game.team1, game.team2, game.category, game.startDate, game.endDate, uint(game.status), game.owner, game.totalOrders);
+        emitGameEvent(game);
 
         return gameIndex;
     }
@@ -76,8 +88,7 @@ contract BXBet is Owned, Balance {
             game.endDate, game.status, game.owner, game.totalOrders);
     }
 
-
-    function finishorders(uint _gameId, uint outcome) private {
+    function finishGame(uint _gameId, uint outcome) public {
         Game storage game = games[_gameId];
         for(uint i = 0; i < game.totalOrders; i++) {
             Order storage order = game.orders[i];
@@ -90,17 +101,16 @@ contract BXBet is Owned, Balance {
                     game.orders[i].status = OrderStatus.Lose;
                     game.orders[order.matchedOrderId].status = OrderStatus.Win;
                   }
+                  emitOrderEvent(game.orders[i]);
+                  emitOrderEvent(game.orders[order.matchedOrderId]);
                 }else{
-                   game.orders[i].status = OrderStatus.Closed;
+                  game.orders[i].status = OrderStatus.Closed;
+                  emitOrderEvent(game.orders[i]);
                 }
             }
         }
-    }
-
-    function finishGame(uint _gameId, uint outcome) public {
-        Game storage game = games[_gameId];
-        finishorders(_gameId, outcome);
         game.status = GameStatus.Finished;
+        emitGameEvent(game);
     }
 
     function getOrderById(uint _gameId, uint _orderId) view public returns (uint, address, uint, OrderType, uint, uint, OrderOutcome, OrderStatus, uint) {
@@ -121,11 +131,7 @@ contract BXBet is Owned, Balance {
                 game.orders[i].matchedOrderId = newOrder.id;
                 newOrder.matchedOrderId = order.id;
                 newOrder.status = OrderStatus.Matched;
-
-                emit OrderEvent(order.id, order.player, order.gameId,
-                  order.orderType, order.amount, order.odd, uint(order.outcome),
-                  uint(order.status), order.matchedOrderId);
-                  break;
+                emitOrderEvent(order);
               }
         }
         return newOrder;
@@ -142,10 +148,7 @@ contract BXBet is Owned, Balance {
         game.orders[newId] = newOrder;
         game.totalOrders += 1;
 
-        emit OrderEvent(newOrder.id, newOrder.player, newOrder.gameId,
-          newOrder.orderType, newOrder.amount, newOrder.odd, uint(newOrder.outcome),
-          uint(newOrder.status), newOrder.matchedOrderId);
-
+        emitOrderEvent(newOrder);
         return newOrder.id;
     }
 
