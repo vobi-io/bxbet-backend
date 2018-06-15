@@ -20,6 +20,11 @@
 #### Seed fakes games
 ``` npm run seed:games --10```
 
+
+#### Run ether for personal account
+``` geth --rpc --rpcapi="db,eth,net,web3,personal" ```
+geth --rinkeby --rpc --rpcapi db,eth,net,web3,personal --unlock="0x48ea6a114a00992feba10c599629d881fd5fb1d4"
+
 Run Test mode
 -----------
 ```shell

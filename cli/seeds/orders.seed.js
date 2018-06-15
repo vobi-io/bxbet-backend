@@ -8,7 +8,7 @@ const config = require('../../src/config')
 const db = require('../../src/db')(config.database.connection, 'Main')
 const Utils = require('../../src/utils/Utils')
 const GameModel = require('../../src/modules/game/gameModel')(db)
-const { placeOrder } = require('../../src/services/contract')
+const { placeOrder, getDefaultAccount } = require('../../src/services/contract')
 
 const exit = message => {
   program.outputHelp(() => colors.green(message))
@@ -36,6 +36,7 @@ program
 
 const seedData = async (number) => {
   try {
+    const account = await getDefaultAccount(0)
     const users = times(number, async () => {
       const gameId = faker.random.number({ min: 1, max: 9 })
       // const gameId = 3
@@ -44,7 +45,7 @@ const seedData = async (number) => {
       const outcome = faker.random.number({ min: 0, max: 2 })
       const odd = faker.random.number({ min: 1, max: 2 })
       const dtNow = Math.round(new Date() / 1000)
-      return placeOrder(gameId, orderType, amount, odd, outcome, dtNow)
+      return placeOrder(gameId, orderType, amount, odd, outcome, account)
     })
     const results = await Promise.all(users)
     console.log(results)

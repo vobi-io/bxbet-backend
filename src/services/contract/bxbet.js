@@ -1,38 +1,60 @@
 'use strict'
 var config = require('app/config')
-var bxBetArtifacts = require('../../../build/contracts/BXBet.json')
-var contract = require('truffle-contract')
+var Artifacts = require('../../../build/contracts/BXBet.json')
+var Contract = require('truffle-contract')
 var Web3 = require('web3')
-
 const gas = 3000000
 const freeTokens = 100
 
+let bxbetAccount = '0x291c32452cd81eeaa4d32860d18fb50911dab602'
+
+const getBexbetAccount = () => {
+  return bxbetAccount
+}
+
 if (typeof global.web3 === 'undefined') {
   global.web3 = new Web3(new Web3.providers.HttpProvider(config.contract.network))
+  // global.web3 = new Web3(config.contract.network)
 }
 
-// const getProvider = () => {
-//   return global.web3 && global.web3.currentProvider ? global.web3.currentProvider : new Web3.providers.HttpProvider(config.contract.network)
-// }
+global.web3.setProvider(global.web3.currentProvider)
 
-const getDefaultAccount = () => {
-  return global.web3.eth.accounts[0]
-}
-
-var bxBet = contract(bxBetArtifacts)
-
-bxBet.setProvider(global.web3.currentProvider)
-
-global.web3.eth.getAccounts((error, accounts) => {
-  if (error) {
-    console.error(error)
-  }
-  // console.log(accounts)
+// in development mode
+global.web3.eth.getAccounts().then(accounts => {
+  bxbetAccount = accounts[0]
 })
+
+const getDefaultAccount = async (index) => {
+  try {
+    const accounts = await global.web3.eth.getAccounts()
+    return Promise.resolve(accounts[index])
+  } catch (err) {
+    console.log(err, getDefaultAccount)
+    return Promise.reject(err)
+  }
+}
+
+var contract = Contract(Artifacts)
+contract.setProvider(global.web3.currentProvider)
+
+if (typeof contract.currentProvider.sendAsync !== 'function') {
+  contract.currentProvider.sendAsync = function() {
+    return contract.currentProvider.send.apply(
+      contract.currentProvider, arguments
+    )
+  }
+}
+
+// global.web3.eth.getAccounts((error, accounts) => {
+//   if (error) {
+//     console.error(error)
+//   }
+//   // console.log(accounts)
+// })
 
 const eventListener = (eventName, callback) => {
   let event
-  bxBet.deployed().then((i) => {
+  contract.deployed().then((i) => {
     event = i[eventName]({ fromBlock: 0, toBlock: 'latest' })
 
     event.watch((err, result) => {
@@ -48,7 +70,11 @@ const eventListener = (eventName, callback) => {
 
 const query = async (functionName, account, ...args) => {
   try {
-    const result = await bxBet.deployed().then((i) => i[functionName].call(...args, {from: getDefaultAccount(), gas}))
+    const data = {gas}
+    if (account) {
+      data.from = account
+    }
+    const result = await contract.deployed().then((i) => i[functionName].call(...args, data))
     return Promise.resolve(result)
   } catch (err) {
     console.log(err)
@@ -56,9 +82,13 @@ const query = async (functionName, account, ...args) => {
   }
 }
 
-const mutation = async (functionName, account, ...args) => {
+const mutation = async (functionName, from, to, ...args) => {
   try {
-    const result = await bxBet.deployed().then((i) => i[functionName](...args, {from: account || getDefaultAccount(), gas}))
+    const data = {from, gas}
+    if (to) {
+      data.to = to
+    }
+    const result = await contract.deployed().then((i) => i[functionName](...args, to, data))
     return Promise.resolve(result)
   } catch (err) {
     console.log(err)
@@ -72,7 +102,7 @@ const finishGameEvent = (cb) => eventListener('FinishGameEvent', cb)
 const OrderEvent = (cb) => eventListener('OrderEvent', cb)
 
 // query
-const getGame = (_gameId, account) => query('getGame', Number(_gameId), account).then(g => {
+const getGame = (_gameId, account) => query('getGame', account, Number(_gameId)).then(g => {
   return Promise.resolve({
     gameId: Number(g[0]),
     title: g[1],
@@ -104,14 +134,14 @@ const getOrderById = (_gameId, _orderId, account) => query('getOrderById', accou
 const getBalance = (account) => query('getBalance', account).then(g => {
   return Promise.resolve({
     amount: Number(g[0]),
-    blockAmount: Number(g[2]),
-    owner: g[1]
+    blockAmount: Number(g[1]),
+    owner: g[2]
   })
 })
 
 // mutation
 const addGame = (_title, _team1, _team2, _category, _startDate, _endDate, status, account) =>
-   mutation('addGame', account, _title, _team1, _team2, _category, _startDate, _endDate, status)
+   mutation('addGame', account, null, _title, _team1, _team2, _category, _startDate, _endDate, status)
 
 /**
 *
@@ -121,10 +151,10 @@ const addGame = (_title, _team1, _team2, _category, _startDate, _endDate, status
 * @param {Number} _odd
 * @param {Number} _outcome (0 - Draw, 1- One, 2- Two)
 */
-const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, account) => mutation('placeOrder', account, _gameId,
+const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, account) => mutation('placeOrder', account, null, _gameId,
                                                           _orderType, _amount, _odd, _outcome)
-const takeFreeTokens = (account) => {
-  return mutation('takeFreeTokens', account, freeTokens)
+const giveFreeTokens = (toUserAccount, amount = 200) => {
+  return mutation('giveFreeTokens', bxbetAccount, null, amount, toUserAccount, freeTokens)
 }
 
 /**
@@ -132,15 +162,30 @@ const takeFreeTokens = (account) => {
  * @param {Number} gameId
  * @param {Number} outcome (0 - Draw, 1- One, 2- Two)
  */
-const finishGame = (gameId, outcome, account) => mutation('finishGame', account, gameId, outcome)
+const finishGame = (gameId, outcome, account) => mutation('finishGame', bxbetAccount, account, gameId, outcome)
 
 /**
  * create Ethereum account
  */
-const createAccount = async (password) => {
+// const createAccount = async (dataToSign, password) => {
+//   try {
+//     const account = global.web3.eth.accounts.create(global.web3.utils.randomHex(32))
+//     const {privateKey, address} = account
+//     const signatureObject = global.web3.eth.accounts.sign(dataToSign + password, privateKey)
+//     return Promise.resolve({signatureObject, privateKey, address})
+//   } catch (err) {
+//     return Promise.reject(err)
+//   }
+//   // global.web3.eth.accounts.create(global.web3.utils.randomHex(32))
+// }
+
+const createAccount = async (dataToSign, password) => {
   try {
-    const result = await global.web3.eth.personal.newAccount(password)
-    return Promise.resolve(result)
+    const address = await global.web3.eth.personal.newAccount(password)
+    //
+    const unlock = await global.web3.eth.personal.unlockAccount(address, password)
+    // const signature = await global.web3.eth.personal.sign(dataToSign, address, password)
+    return Promise.resolve({unlock, address})
   } catch (err) {
     return Promise.reject(err)
   }
@@ -152,12 +197,14 @@ module.exports = {
   finishGameEvent,
   getGame,
   placeOrder,
-  takeFreeTokens,
+  giveFreeTokens,
   getOrderById,
   getBalance,
   OrderEvent,
   createAccount,
   finishGame,
   addGame,
-  freeTokens
+  freeTokens,
+  getDefaultAccount,
+  getBexbetAccount
 }

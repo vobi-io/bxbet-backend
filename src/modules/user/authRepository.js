@@ -8,7 +8,7 @@ const roles = require('app/modules/roles/roles').roles
 const MailService = require('app/services/sendgrid/sendgridSevice')
 const jwtService = require('app/services/jwtService')
 const Promise = require('bluebird')
-var {takeFreeTokens, getBalance, createAccount, freeTokens} = require('app/services/contract')
+var {giveFreeTokens, getBalance, createAccount, freeTokens, getBexbetAccount} = require('app/services/contract')
 
 class AuthRepository {
   constructor ({ db }) {
@@ -23,7 +23,7 @@ class AuthRepository {
 
     await UserModel.checkIfEmailExist(email)
 
-    const blockChain = await createAccount()
+    const blockChain = await createAccount(email, password)
     const data = {
       email,
       password: Utils.generateHash(password),
@@ -42,8 +42,10 @@ class AuthRepository {
     await MailService.sendWelcomeEmail(user)
     const accessToken = jwtService(appConfig.jwt).sign({ id: user.id })
 
-    const result = await takeFreeTokens(blockChain.address)
-    console.log(result)
+    const result = await giveFreeTokens(blockChain.address)
+    const balance = await getBalance(blockChain.address)
+    const balance1 = await getBalance(getBexbetAccount())
+    console.log(result, balance)
 
     return Promise.resolve({
       accessToken: accessToken,

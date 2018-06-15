@@ -10,8 +10,8 @@ contract Balance {
 
     struct Wallet {
         uint256 amount;
-        address owner;
         uint256 blockAmount;
+        address owner;
     }
 
     // This creates an array with all balances
@@ -30,7 +30,7 @@ contract Balance {
      */
     constructor(uint256 initialSupply, string tokenName, string tokenSymbol) public {
         totalSupply = initialSupply * 10 * uint256(decimals);       // Update total supply with the decimal amount
-        balanceOf[msg.sender] = Wallet(totalSupply, msg.sender, 0); // Give the creator all initial tokens
+        balanceOf[msg.sender] = Wallet(totalSupply, 0, msg.sender); // Give the creator all initial tokens
         name = tokenName;                                           // Set the name for display purposes
         symbol = tokenSymbol;                                       // Set the symbol for display purposes
     }
