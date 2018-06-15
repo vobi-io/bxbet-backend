@@ -100,6 +100,8 @@ const mutation = async (functionName, from, to, ...args) => {
 const gameEvent = (cb) => eventListener('GameEvent', cb)
 const orderEvent = (cb) => eventListener('OrderEvent', cb)
 const transferEvent = (cb) => eventListener('Transfer', cb)
+const blockTokensEvent = (cb) => eventListener('BlockTokens', cb)
+const unblockTokensEvent = (cb) => eventListener('UnblockTokens', cb)
 
 // query
 const getGame = (_gameId, account) => query('getGame', account, Number(_gameId)).then(g => {
@@ -205,5 +207,7 @@ module.exports = {
   freeTokens,
   getDefaultAccount,
   getBexbetAccount,
-  transferEvent
+  transferEvent,
+  blockTokensEvent,
+  unblockTokensEvent
 }

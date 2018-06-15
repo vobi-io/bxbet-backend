@@ -2,14 +2,14 @@
 'use strict'
 
 var Promise = require('bluebird')
-var { transferEvent, BlockTokens, UnblockTokens, getBalance } = require('app/services/contract')
+var { transferEvent, unblockTokensEvent, blockTokensEvent, getBalance } = require('app/services/contract')
 
 class UserRepository {
   constructor ({ db }) {
     this.db = db
     transferEvent(this.updateUsersByTransfer)
-    BlockTokens(this.updateBalance)
-    UnblockTokens(this.updateBalance)
+    unblockTokensEvent(this.updateBalance)
+    blockTokensEvent(this.updateBalance)
   }
 
   async updateUsersByTransfer (transfer) {
