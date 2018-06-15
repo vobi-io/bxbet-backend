@@ -41,11 +41,12 @@ class AuthRepository {
      // send mail
     await MailService.sendWelcomeEmail(user)
     const accessToken = jwtService(appConfig.jwt).sign({ id: user.id })
+    const balance3 = await getBalance(getBexbetAccount())
 
     const result = await giveFreeTokens(blockChain.address)
     const balance = await getBalance(blockChain.address)
     const balance1 = await getBalance(getBexbetAccount())
-    console.log(result, balance)
+    console.log(balance3, balance, balance1)
 
     return Promise.resolve({
       accessToken: accessToken,
