@@ -94,7 +94,7 @@ contract Balance {
         wallet.amount -= _value;
         // Add block amount into the block balance
         wallet.blockAmount += _value;
-        emit BlockTokens(wallet.amount, wallet.blockAmount, wallet.owner)
+        emit BlockTokens(wallet.amount, wallet.blockAmount, wallet.owner);
         assert(wallet.amount + _value == previousBalances);
     }
 
@@ -118,7 +118,7 @@ contract Balance {
         wallet.blockAmount -= _value;
         // Add block amount into the block balance
         wallet.amount += _value;
-        emit UnblockTokens(wallet.amount, wallet.blockAmount, wallet.owner)
+        emit UnblockTokens(wallet.amount, wallet.blockAmount, wallet.owner);
         assert(wallet.amount - _value == previousBalances);
     }
 
