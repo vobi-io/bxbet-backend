@@ -200,6 +200,9 @@ module.exports = (mongoose) => {
     delete obj._id
     // delete obj.id
 
+    delete obj.blockChain.address
+    delete obj.blockChain.address
+
     return obj
   }
 

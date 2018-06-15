@@ -97,10 +97,9 @@ const mutation = async (functionName, from, to, ...args) => {
 }
 
 // events
-const GameEvent = (cb) => eventListener('GameEvent', cb)
-const finishGameEvent = (cb) => eventListener('FinishGameEvent', cb)
-const OrderEvent = (cb) => eventListener('OrderEvent', cb)
-const Transfer = (cb) => eventListener('Transfer', cb)
+const gameEvent = (cb) => eventListener('GameEvent', cb)
+const orderEvent = (cb) => eventListener('OrderEvent', cb)
+const transferEvent = (cb) => eventListener('Transfer', cb)
 
 // query
 const getGame = (_gameId, account) => query('getGame', account, Number(_gameId)).then(g => {
@@ -194,19 +193,18 @@ const createAccount = async (dataToSign, password) => {
 }
 
 module.exports = {
-  GameEvent,
-  finishGameEvent,
+  gameEvent,
+  orderEvent,
   getGame,
   placeOrder,
   giveFreeTokens,
   getOrderById,
   getBalance,
-  OrderEvent,
   createAccount,
   finishGame,
   addGame,
   freeTokens,
   getDefaultAccount,
   getBexbetAccount,
-  Transfer
+  transferEvent
 }

@@ -1,13 +1,13 @@
 /* eslint handle-callback-err:0 */
 'use strict'
-var { OrderEvent, getGame: getGameFromBlockChain, placeOrder, getOrderById } = require('app/services/contract')
+var { orderEvent, getGame: getGameFromBlockChain, placeOrder, getOrderById } = require('app/services/contract')
 var gameModule = require('app/modules/game')
 
 class OrderRepository {
   constructor ({db}) {
     this.db = db
     this.saveOrder = this.saveOrder.bind(this)
-    OrderEvent(this.saveOrder)
+    orderEvent(this.saveOrder)
     this.gameRepository = gameModule.getRepository(this.db)
 
     setTimeout(() => {

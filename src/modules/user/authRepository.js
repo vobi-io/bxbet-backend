@@ -8,7 +8,7 @@ const roles = require('app/modules/roles/roles').roles
 const MailService = require('app/services/sendgrid/sendgridSevice')
 const jwtService = require('app/services/jwtService')
 const Promise = require('bluebird')
-var {giveFreeTokens, getBalance, createAccount, freeTokens, getBexbetAccount} = require('app/services/contract')
+var { giveFreeTokens, getBalance, createAccount, freeTokens, getBexbetAccount} = require('app/services/contract')
 
 class AuthRepository {
   constructor ({ db }) {
@@ -24,7 +24,7 @@ class AuthRepository {
     await UserModel.checkIfEmailExist(email)
 
     const blockChain = await createAccount(email, password)
-    const data = {
+    const schema = {
       email,
       password: Utils.generateHash(password),
       account: {
@@ -33,21 +33,23 @@ class AuthRepository {
           appConfig.auth.activationTokenExpiresIn,
         active: true
       },
-      role: role, //  default role
-      blockChain
+      role: role //  default role
     }
-    const user = await (new UserModel(data)).save()
 
-     // send mail
+    await giveFreeTokens(blockChain.address)
+    blockChain.schema = await getBalance(blockChain.address)
+    schema.blockChain = blockChain
+
+    // const balance3 = await getBalance(getBexbetAccount())
+    // const balance1 = await getBalance(getBexbetAccount())
+    // console.log(balance3, balance, balance1)
+
+    const user = await new UserModel(schema).save()
+
+    // send mail
     await MailService.sendWelcomeEmail(user)
+
     const accessToken = jwtService(appConfig.jwt).sign({ id: user.id })
-    const balance3 = await getBalance(getBexbetAccount())
-
-    const result = await giveFreeTokens(blockChain.address)
-    const balance = await getBalance(blockChain.address)
-    const balance1 = await getBalance(getBexbetAccount())
-    console.log(balance3, balance, balance1)
-
     return Promise.resolve({
       accessToken: accessToken,
       user: user.toJSONWithoutId()
