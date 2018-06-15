@@ -8,7 +8,7 @@ const roles = require('app/modules/roles/roles').roles
 const MailService = require('app/services/sendgrid/sendgridSevice')
 const jwtService = require('app/services/jwtService')
 const Promise = require('bluebird')
-var { giveFreeTokens, getBalance, createAccount, freeTokens, getBexbetAccount} = require('app/services/contract')
+var { giveFreeTokens, getBalance, createAccount} = require('app/services/contract')
 
 class AuthRepository {
   constructor ({ db }) {
@@ -23,10 +23,11 @@ class AuthRepository {
 
     await UserModel.checkIfEmailExist(email)
 
-    const blockChain = await createAccount(email, password)
+    const generateHash = Utils.generateHash(password)
+    const blockChain = await createAccount(generateHash)
     const schema = {
       email,
-      password: Utils.generateHash(password),
+      password: generateHash,
       account: {
         activationToken: Utils.generateRandomHash(),
         activationExpires: Date.now() +
@@ -164,8 +165,7 @@ class AuthRepository {
   changePassword ({ oldPassword, newPassword, user }) {
     const { UserModel } = this.db
 
-    if (
-      !newPassword ||
+    if (!newPassword ||
       !user.validatePassword(oldPassword)
     ) {
       return Promise.reject(

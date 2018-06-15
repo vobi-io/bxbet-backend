@@ -179,12 +179,11 @@ const finishGame = (gameId, outcome, account) => mutation('finishGame', bxbetAcc
 //   // global.web3.eth.accounts.create(global.web3.utils.randomHex(32))
 // }
 
-const createAccount = async (dataToSign, password) => {
+const createAccount = async (password) => {
   try {
     const address = await global.web3.eth.personal.newAccount(password)
     //
     const unlock = await global.web3.eth.personal.unlockAccount(address, password)
-    // const signature = await global.web3.eth.personal.sign(dataToSign, address, password)
     return Promise.resolve({unlock, address})
   } catch (err) {
     return Promise.reject(err)

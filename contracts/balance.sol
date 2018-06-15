@@ -20,6 +20,9 @@ contract Balance {
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
 
+    event BlockTokens(uint256 amount, uint256 blockAmount, address owner);
+    event UnblockTokens(uint256 amount, uint256 blockAmount, address owner);
+
     // This notifies clients about the amount burnt
     event Burn(address indexed from, uint256 value);
 
@@ -91,6 +94,7 @@ contract Balance {
         wallet.amount -= _value;
         // Add block amount into the block balance
         wallet.blockAmount += _value;
+        emit BlockTokens(wallet.amount, wallet.blockAmount, wallet.owner)
         assert(wallet.amount + _value == previousBalances);
     }
 
@@ -114,6 +118,7 @@ contract Balance {
         wallet.blockAmount -= _value;
         // Add block amount into the block balance
         wallet.amount += _value;
+        emit UnblockTokens(wallet.amount, wallet.blockAmount, wallet.owner)
         assert(wallet.amount - _value == previousBalances);
     }
 

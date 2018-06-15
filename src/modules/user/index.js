@@ -1,4 +1,4 @@
-const getUerRepository = (db) => {
+const getUserRepository = (db) => {
   var UserRepository = require('./userRepository')
   return new UserRepository({db})
 }
@@ -18,7 +18,7 @@ const getAuthCtrl = (db) => {
 const getUserCtrl = (db) => {
   var UserController = require('./userController')
   return new UserController({db,
-    userRepository: getUerRepository(db),
+    userRepository: getUserRepository(db),
     authRepository: getAuthRepository(db)})
 }
 
@@ -33,7 +33,7 @@ const getGraphql = ({db, TC}) => {
   return require('./userGraphql')({
     UserModel: db.UserModel,
     isAuthenticated,
-    userRepository: getUerRepository(db),
+    userRepository: getUserRepository(db),
     authRepository: getAuthRepository(db),
     TC
   })
@@ -43,7 +43,7 @@ module.exports = {
   getUserCtrl,
   getAuthCtrl,
   getAuthRepository,
-  getUerRepository,
+  getUserRepository,
   getRouteV1,
   getGraphql: getGraphql, // TODO: NOTE: temp returns null
   getRoute: (db) => null,
