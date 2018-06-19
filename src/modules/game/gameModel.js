@@ -2,16 +2,16 @@ module.exports = (mongoose) => {
   let Schema = mongoose.Schema
 
   let gameSchema = new Schema({
-    gameId: {type: Number},
+    gameId: {type: Number, description: 'Game id in Blockchain'},
     title: {type: String},
     team1: {type: String},
     team2: {type: String},
-    category: {type: String},
-    startDate: {type: Number},
-    endDate: {type: Number},
-    status: {type: Number},
+    category: {type: String, description: 'Football, Basketball, etc...'},
+    startDate: {type: Number, description: 'Game start date'},
+    endDate: {type: Number, description: 'Game end date'},
+    status: {type: Number, description: 'Open=0, Finished=1'},
     owner: {type: String},
-    totalOrders: {type: Number, default: 0},
+    totalOrders: {type: Number, default: 0, description: 'Total orders'},
     created: {type: Date, default: Date.now},
     modified: {type: Date}
   }, {})

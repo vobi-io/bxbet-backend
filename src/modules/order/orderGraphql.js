@@ -1,109 +1,86 @@
 
-var { composeWithMongoose } = require('graphql-compose-mongoose/node8')
-const customizationOptions = {} // left it empty for simplicity, described below
+const {
+  isAuthenticated,
+  addOneToOneRelation,
+  prepareCrudModel,
+  attachToAll,
+  attachOwner
+} = require('../core/graphql')
 
-module.exports = ({OrderModel, isAuthenticated, TC}) => {
-  const {schemaComposer, UserTC} = TC
-  const OrderTC = composeWithMongoose(OrderModel, customizationOptions)
+module.exports = ({OrderModel, TC}) => {
+  const {schemaComposer} = TC
+  // generate crud queries and mutations for model
+  // uses model.name to generate names
+  const {
+    queries: crudQueries,
+    mutations: crudMutations,
+    ModelTC: OrderTC
+  } = prepareCrudModel({
+    Model: OrderModel
+  })
 
-  OrderTC.addRelation('userObj',
-    {
-      resolver: () => UserTC.getResolver('findById'),
-      prepareArgs: {
-        filter: source => ({ _id: source.user })
-      },
-      projection: { user: true }
-    }
-  )
-
-  // const extendedResolver = ProductTC.getResolver('findMany').addFilterArg({
-  //   name: 'nameRegexp',
-  //   type: 'String',
-  //   description: 'Search by regExp',
-  //     query: (query, value, rp) => { // eslint-disable-line
-  //       query.name = new RegExp(value, 'i'); // eslint-disable-line
-  //     }
-  // })
-  // extendedResolver.name = 'findMany'
-  // ProductTC.addResolver(extendedResolver)
-
-  // OrderTC.addRelation('last10Articles', {
-  //   resolver: () => OrderTC.getResolver('findMany'),
-  //   prepareArgs: {
-  //     filter: source => ({ userId: `${source._id}` }), // calculate `filter` argument
-  //     limit: 10, // set value to `limit` argument
-  //     sort: { _id: -1 }, // set `sort` argument
-  //     skip: null // remove `skip` argument
-  //   },
-  //   projection: { _id: true }
-  // })
-
-  // const findManyResolver = OrderTC.getResolver('findMany').addFilterArg({
-  //   name: 'fullTextSearch',
-  //   type: 'String',
-  //   description: 'Fulltext search with mongodb stemming and weights',
-  //   query: (query, value, rp) => {
-  //     rp.args.sort = {
-  //       score: { $meta: 'textScore' }
-  //     }
-  //     query.$text = { $search: value, $language: 'ru' }
-  //     rp.projection.score = { $meta: 'textScore' }
+  // OrderTC.addRelation('userObj',
+  //   {
+  //     resolver: () => UserTC.getResolver('findById'),
+  //     prepareArgs: {
+  //       filter: source => ({ _id: source.user })
+  //     },
+  //     projection: { user: true }
   //   }
+  // )
+
+ // set all owner wrappers
+  const queries = attachOwner(crudQueries)
+  const mutations = attachOwner(crudMutations)
+
+  // queries.bookingManyByTalent = BookingTC.getResolver('findMany').wrapResolve(next => rp => {
+  //   if (!rp.args.filter) {
+  //     rp.args.filter = {}
+  //   }
+
+  //   rp.args.filter.talentId = rp.context.user._id
+
+  //   return next(rp)
   // })
-  // OrderTC.setResolver('findMany1', findManyResolver)
 
-  const findResolverByUser = next => rp => {
-    const { user } = rp.context
-    if (!rp.args.filter) {
-      rp.args.filter = {}
-    }
-    rp.args.filter.user = user
-    return next(rp)
-  }
+  // queries.bookingCountByTalent = BookingTC.getResolver('count').wrapResolve(next => rp => {
+  //   if (!rp.args.filter) {
+  //     rp.args.filter = {}
+  //   }
 
-  const findByIdResolverByUser = (next) => async (rp) => {
-    const result = await next(rp)
-    if (result.user !== rp.context.user) {
-      throw new Error('Not allowed')
-    }
-    return result
-  }
+  //   rp.args.filter.talentId = rp.context.user._id
 
-  const createOneWithUser = next => (rp) => {
-    // rp.args.record.user = rp.context.user._id
-    return next(rp)
-  }
+  //   return next(rp)
+  // })
 
-  const updateOne = next => req => {
-    if (req.context.user._id !== req.args.input.record._id) {
-      throw new Error('Not allowed')
-    }      // Add restaurant to the array in user and in restaurant.followerIds
+ // ad relations to model
+  // addOneToOneRelation({
+  //   ModelTC: BookingTC,
+  //   RelationTC: UserTC,
+  //   name: 'talent',
+  //   relPropName: 'talentId'
+  // })
 
-    delete req.args.input.record.visited
-    delete req.args.input.record.restaurant
-    return next(req)
-  }
+  // addOneToOneRelation({
+  //   ModelTC: BookingTC,
+  //   RelationTC: UserTC,
+  //   name: 'booker',
+  //   relPropName: 'bookerId'
+  // })
 
-  schemaComposer.rootQuery().addFields({
-    gameById: OrderTC.getResolver('findById').wrapResolve(findByIdResolverByUser),
-    gameByIds: OrderTC.get('$findByIds'),
-    gameOne: OrderTC.get('$findOne').wrapResolve(findResolverByUser),
-    gameMany: OrderTC.get('$findMany').wrapResolve(findResolverByUser),
-    gameCount: OrderTC.get('$count'),
-    gameConnection: OrderTC.get('$connection'),
-    gamePagination: OrderTC.get('$pagination')
-  })
+ // register queries
+  schemaComposer
+   .rootQuery()
+   .addFields(queries)
 
-  schemaComposer.rootMutation().addFields({
-    gameCreate: OrderTC.getResolver('createOne').wrapResolve(createOneWithUser),
-    gameUpdateById: OrderTC.getResolver('updateById'),
-    gameUpdateOne: OrderTC.getResolver('updateOne'),
-    gameUpdateMany: OrderTC.getResolver('updateMany'),
-    gameRemoveById: OrderTC.getResolver('removeById'),
-    gameRemoveOne: OrderTC.getResolver('removeOne'),
-    gameRemoveMany: OrderTC.getResolver('removeMany')
-  })
+ // register mutations
+  schemaComposer
+   .rootMutation()
+   .addFields({
+     ...attachToAll(isAuthenticated)(mutations)
+   })
 
   TC.OrderTC = OrderTC
+
   return OrderTC
 }

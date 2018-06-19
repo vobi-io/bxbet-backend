@@ -6,7 +6,7 @@ import "./Balance.sol";
 
 contract BXBet is Owned, Balance {
     mapping(uint => Game) games;
-    enum GameStatus { Open, InProgress, Finished }
+    enum GameStatus { Open, Finished }
     enum OrderType { Buy, Sell }
     enum OrderStatus { Open, Matched, Win, Lose, Closed }
     enum OrderOutcome {Draw, One, Two }
