@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "./Owned.sol";
-import "./Balance.sol";
+import "./owned.sol";
+import "./balance.sol";
 
 
 contract BXBet is Owned, Balance {

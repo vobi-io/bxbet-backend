@@ -1,5 +1,5 @@
 Eutil = require('ethereumjs-util')
-BXBet = artifacts.require('./BXBet.sol')
+BXBet = artifacts.require('./bxbet.sol')
 
 module.exports = function (callback) {
   current_time = Math.round(new Date() / 1000)
