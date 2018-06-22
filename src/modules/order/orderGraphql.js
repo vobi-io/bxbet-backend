@@ -35,7 +35,13 @@ module.exports = ({OrderModel, orderRepository, TC}) => {
 
   OrderTC.addResolver({
     name: 'placeOrder',
-    args: {},
+    args: {
+      gameId: 'Float',
+      orderType: 'Float',
+      amount: 'Float',
+      odd: 'Float',
+      outcome: 'Float'
+    },
     type: OrderTC,
     resolve: ({ args, context: { user } }) => orderRepository.placeOrder({args, user})
   })
