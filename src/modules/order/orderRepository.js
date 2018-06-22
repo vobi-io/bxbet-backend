@@ -45,7 +45,9 @@ class OrderRepository {
   async placeOrder ({order, user}) {
     const {blockChain: {address}} = user
     const {gameId, orderType, amount, odd, outcome} = order
-    placeOrder(gameId, orderType, amount, odd, outcome, address)
+    const result = await placeOrder(gameId, orderType, amount, odd, outcome, address)
+
+    return Promise.resolve(result)
   }
 }
 
