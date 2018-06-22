@@ -38,6 +38,11 @@ class UserRepository {
     }
   }
 
+  async getBalance ({user}) {
+    const balance = await getBalance(user.blockChain.address)
+    return Promise.resolve(balance)
+  }
+
 }
 
 module.exports = UserRepository

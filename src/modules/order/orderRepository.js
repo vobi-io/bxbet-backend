@@ -41,6 +41,12 @@ class OrderRepository {
       return Promise.reject(err)
     }
   }
+
+  async placeOrder ({order, user}) {
+    const {blockChain: {address}} = user
+    const {gameId, orderType, amount, odd, outcome} = order
+    placeOrder(gameId, orderType, amount, odd, outcome, address)
+  }
 }
 
 module.exports = OrderRepository

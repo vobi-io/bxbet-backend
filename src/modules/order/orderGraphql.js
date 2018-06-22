@@ -7,7 +7,7 @@ const {
   attachOwner
 } = require('../core/graphql')
 
-module.exports = ({OrderModel, TC}) => {
+module.exports = ({OrderModel, orderRepository, TC}) => {
   const {schemaComposer} = TC
   // generate crud queries and mutations for model
   // uses model.name to generate names
@@ -30,43 +30,15 @@ module.exports = ({OrderModel, TC}) => {
   // )
 
  // set all owner wrappers
-  const queries = attachOwner(crudQueries)
+  const queries = crudQueries// attachOwner(crudQueries)
   const mutations = attachOwner(crudMutations)
 
-  // queries.bookingManyByTalent = BookingTC.getResolver('findMany').wrapResolve(next => rp => {
-  //   if (!rp.args.filter) {
-  //     rp.args.filter = {}
-  //   }
-
-  //   rp.args.filter.talentId = rp.context.user._id
-
-  //   return next(rp)
-  // })
-
-  // queries.bookingCountByTalent = BookingTC.getResolver('count').wrapResolve(next => rp => {
-  //   if (!rp.args.filter) {
-  //     rp.args.filter = {}
-  //   }
-
-  //   rp.args.filter.talentId = rp.context.user._id
-
-  //   return next(rp)
-  // })
-
- // ad relations to model
-  // addOneToOneRelation({
-  //   ModelTC: BookingTC,
-  //   RelationTC: UserTC,
-  //   name: 'talent',
-  //   relPropName: 'talentId'
-  // })
-
-  // addOneToOneRelation({
-  //   ModelTC: BookingTC,
-  //   RelationTC: UserTC,
-  //   name: 'booker',
-  //   relPropName: 'bookerId'
-  // })
+  OrderTC.addResolver({
+    name: 'placeOrder',
+    args: {},
+    type: OrderTC,
+    resolve: ({ args, context: { user } }) => orderRepository.placeOrder({args, user})
+  })
 
  // register queries
   schemaComposer
@@ -77,7 +49,9 @@ module.exports = ({OrderModel, TC}) => {
   schemaComposer
    .rootMutation()
    .addFields({
-     ...attachToAll(isAuthenticated)(mutations)
+     ...attachToAll(isAuthenticated)({
+       placeOrder: OrderTC.getResolver('placeOrder')
+     })
    })
 
   TC.OrderTC = OrderTC

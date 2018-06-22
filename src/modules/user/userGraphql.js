@@ -118,6 +118,16 @@ module.exports = ({
       authRepository.deactivateAccount(context)
   })
 
+  UserTC.addResolver({
+    name: 'getBalance',
+    args: {},
+    type: ` type Balance {
+      amount: Number,
+      blockAmount: Number
+    }`,
+    resolve: ({ context: { user } }) => userRepository.getBalance(user)
+  })
+
   schemaComposer
     .rootQuery()
     .addFields({
