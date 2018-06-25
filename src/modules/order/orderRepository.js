@@ -2,6 +2,7 @@
 'use strict'
 var { orderEvent, getGame: getGameFromBlockChain, placeOrder, getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
 var gameModule = require('app/modules/game')
+var _ = require('lodash')
 
 class OrderRepository {
   constructor ({db}) {
@@ -24,6 +25,9 @@ class OrderRepository {
 
   async saveOrder (schema) {
     try {
+      if (!schema || _.isEmpty(schema)) {
+        return Promise.resolve()
+      }
       const orderId = Number(schema.orderId)
       const gameId = Number(schema.gameId)
 
