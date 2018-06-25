@@ -17,7 +17,7 @@ const getRouteV1 = (db) => {
 
 const getGraphql = ({db, TC}) => {
   const { isAuthenticated } = require('../../policies/graphqlAuth')
-  require('./gameGraphql')({ GameModel: db.GameModel, isAuthenticated, TC })
+  require('./gameGraphql')({ GameModel: db.GameModel, isAuthenticated, TC, gameRepository: getRepository(db) })
 }
 
 module.exports = {
