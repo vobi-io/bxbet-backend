@@ -58,13 +58,13 @@ contract BXBet is Owned, Balance {
 
     function addGame(
         string _title, string _team1, string _team2, string _category,
-        uint _startDate, uint _endDate, uint status) public returns (uint) {
+        uint _startDate, uint _endDate, uint status, address owner) public returns (uint) {
         // require (now > _startDate);
         require(_startDate < _endDate);
         totalGames += 1;
         uint gameIndex = totalGames - 1;
         Game memory game = Game(gameIndex, _title, _team1, _team2, _category,
-            _startDate, _endDate, GameStatus(status), msg.sender, 0);
+            _startDate, _endDate, GameStatus(status), owner, 0);
         games[gameIndex] = game;
 
         emitGameEvent(game);

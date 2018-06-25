@@ -7,7 +7,7 @@ const {
   attachOwner
 } = require('../core/graphql')
 
-module.exports = ({GameModel, TC}) => {
+module.exports = ({GameModel, gameRepository, TC}) => {
   const {schemaComposer} = TC
   // generate crud queries and mutations for model
   // uses model.name to generate names
@@ -19,54 +19,33 @@ module.exports = ({GameModel, TC}) => {
     Model: GameModel
   })
 
-  // GameTC.addRelation('userObj',
-  //   {
-  //     resolver: () => UserTC.getResolver('findById'),
-  //     prepareArgs: {
-  //       filter: source => ({ _id: source.user })
-  //     },
-  //     projection: { user: true }
-  //   }
-  // )
-
  // set all owner wrappers
   const queries = crudQueries // attachOwner(crudQueries)
-  const mutations = attachOwner(crudMutations)
+  // const mutations = attachOwner(crudMutations)
 
-  // queries.bookingManyByTalent = BookingTC.getResolver('findMany').wrapResolve(next => rp => {
-  //   if (!rp.args.filter) {
-  //     rp.args.filter = {}
-  //   }
+  GameTC.addResolver({
+    name: 'createGame',
+    args: {
+      title: 'String',
+      team1: 'String',
+      team2: 'String',
+      category: 'String',
+      startDate: 'Date',
+      endDate: 'Date'
+    },
+    type: GameTC,
+    resolve: ({ args, context: { user } }) => gameRepository.createGame({game: args, user})
+  })
 
-  //   rp.args.filter.talentId = rp.context.user._id
-
-  //   return next(rp)
-  // })
-
-  // queries.bookingCountByTalent = BookingTC.getResolver('count').wrapResolve(next => rp => {
-  //   if (!rp.args.filter) {
-  //     rp.args.filter = {}
-  //   }
-
-  //   rp.args.filter.talentId = rp.context.user._id
-
-  //   return next(rp)
-  // })
-
- // ad relations to model
-  // addOneToOneRelation({
-  //   ModelTC: BookingTC,
-  //   RelationTC: UserTC,
-  //   name: 'talent',
-  //   relPropName: 'talentId'
-  // })
-
-  // addOneToOneRelation({
-  //   ModelTC: BookingTC,
-  //   RelationTC: UserTC,
-  //   name: 'booker',
-  //   relPropName: 'bookerId'
-  // })
+  GameTC.addResolver({
+    name: 'finishGame',
+    args: {
+      gameId: 'Float',
+      outcome: 'Float'
+    },
+    type: GameTC,
+    resolve: ({ args, context: { user } }) => gameRepository.finishGame({...args, user})
+  })
 
  // register queries
   schemaComposer
@@ -77,7 +56,11 @@ module.exports = ({GameModel, TC}) => {
   schemaComposer
    .rootMutation()
    .addFields({
-     ...attachToAll(isAuthenticated)(mutations)
+     ...attachToAll(isAuthenticated)({
+       createGame: GameTC.get('$createGame'),
+       finishGame: GameTC.get('$finishGame')
+
+     })
    })
 
   TC.GameTC = GameTC

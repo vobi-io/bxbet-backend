@@ -1,6 +1,7 @@
 /* eslint handle-callback-err:0 */
 'use strict'
-var { gameEvent } = require('app/services/contract')
+var { gameEvent, addGame: addGameInBlockChain, getDefaultAccount,
+  getMutationResultId, getGameById, finishGame } = require('app/services/contract')
 
 class GameRepository {
   constructor ({db}) {
@@ -25,6 +26,32 @@ class GameRepository {
     } catch (err) {
       return Promise.reject(err)
     }
+  }
+
+  async createGame ({game, user}) {
+    try {
+      const {blockChain: {address}} = user
+      const {title, team1, team2, category, startDate, endDate} = game
+      const account = await getDefaultAccount(0)
+
+      const start = new Date(startDate) / 1000
+      const end = new Date(endDate) / 1000
+      const result = await addGameInBlockChain(title, team1, team2, category, start, end, 0, address, account)
+      const gameId = getMutationResultId(result, 'gameId')
+      const schema = await getGameById(gameId)
+      const saveGame = await this.saveGame(schema)
+      return Promise.resolve(saveGame)
+    } catch (err) {
+      return Promise.reject(err)
+    }
+  }
+
+  async finishGame ({gameId, outcome, user}) {
+    const account = await getDefaultAccount(0)
+    await finishGame(gameId, outcome, account)
+    const schema = await getGameById(gameId)
+    const saveGame = await this.saveGame(schema)
+    return Promise.resolve(saveGame)
   }
 }
 

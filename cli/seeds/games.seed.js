@@ -43,7 +43,7 @@ const seedData = async (number) => {
       const startDate = dtNow + faker.random.number({ min: 10000, max: 200000 })
       const endDate = startDate + faker.random.number({ min: 10000, max: 200000 })
 
-      return addGame(title, team1, team2, 'Football', startDate, endDate, 0, account)
+      return addGame(title, team1, team2, 'Football', startDate, endDate, 0, account, account)
     })
     const results = await Promise.all(users)
     exit(`Successfully seeded ${results.length} games`)
