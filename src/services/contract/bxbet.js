@@ -24,7 +24,7 @@ global.web3.eth.getAccounts().then(accounts => {
   bxbetAccount = accounts[0]
 })
 
-const getDefaultAccount = async (index) => {
+const getDefaultAccount = async (index = 0) => {
   try {
     const accounts = await global.web3.eth.getAccounts()
     return Promise.resolve(accounts[index])
@@ -153,8 +153,8 @@ const addGame = (_title, _team1, _team2, _category, _startDate, _endDate, status
 * @param {Number} _odd
 * @param {Number} _outcome (0 - Draw, 1- One, 2- Two)
 */
-const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, account) => mutation('placeOrder', account, null, _gameId,
-                                                          _orderType, _amount, _odd, _outcome)
+const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, _player, account) => mutation('placeOrder', account, null, _gameId,
+                                                          _orderType, _amount, _odd, _outcome, _player)
 const giveFreeTokens = (toUserAccount, amount = 200) => {
   return mutation('giveFreeTokens', bxbetAccount, null, amount, toUserAccount, freeTokens)
 }
@@ -193,6 +193,14 @@ const createAccount = async (password) => {
   // global.web3.eth.accounts.create(global.web3.utils.randomHex(32))
 }
 
+const getMutationResultId = (result, key) => {
+  for (var i of result.logs) {
+    if (i.args && i.args[key]) {
+      return i.args[key].toString()
+    }
+  }
+  return null
+}
 module.exports = {
   gameEvent,
   orderEvent,
@@ -209,5 +217,6 @@ module.exports = {
   getBexbetAccount,
   transferEvent,
   blockTokensEvent,
-  unblockTokensEvent
+  unblockTokensEvent,
+  getMutationResultId
 }

@@ -18,7 +18,9 @@
 
 
 #### Seed fakes games
-``` npm run seed:games --10```
+``` npm run seed:games 10```
+``` npm run seed:orders 10```
+``` npm run seed:uses 10```
 
 
 #### Run ether for personal account

@@ -43,7 +43,7 @@ module.exports = ({OrderModel, orderRepository, TC}) => {
       outcome: 'Float'
     },
     type: OrderTC,
-    resolve: ({ args, context: { user } }) => orderRepository.placeOrder({args, user})
+    resolve: ({ args, context: { user } }) => orderRepository.placeOrder({order: args, user})
   })
 
  // register queries

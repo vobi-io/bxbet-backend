@@ -138,13 +138,13 @@ contract BXBet is Owned, Balance {
                 order.status, order.matchedOrderId);
         }
 
-    function placeOrder(uint _gameId, uint _orderType, uint _amount, uint _odd, uint _outcome)
+    function placeOrder(uint _gameId, uint _orderType, uint _amount, uint _odd, uint _outcome, address _player)
         public payable returns (uint) {
             Game storage game = games[_gameId];
             // require (now < game.startDate);
 
             uint newId = game.totalOrders;
-            Order memory newOrder = Order(newId, msg.sender, _gameId, OrderType(_orderType), _amount, _odd,
+            Order memory newOrder = Order(newId, _player, _gameId, OrderType(_orderType), _amount, _odd,
                 OrderOutcome(_outcome), OrderStatus.Open, NONE);
 
             //check matched
@@ -178,10 +178,10 @@ contract BXBet is Owned, Balance {
 
     function blockTokensByOrderType(Order order) private {
         if(order.orderType == OrderType.Buy){
-          //Block tokens for this orders
+          //Block tokens for this orders when is Buy order
           blockTokens(order.player, order.amount);
         }else{
-          //Block tokens for this orders
+          //Block tokens for this orders when is Sell order
           blockTokens(order.player, order.amount * order.odd);
         }
     }

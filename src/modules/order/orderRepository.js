@@ -1,6 +1,6 @@
 /* eslint handle-callback-err:0 */
 'use strict'
-var { orderEvent, getGame: getGameFromBlockChain, placeOrder, getOrderById } = require('app/services/contract')
+var { orderEvent, getGame: getGameFromBlockChain, placeOrder, getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
 var gameModule = require('app/modules/game')
 
 class OrderRepository {
@@ -43,11 +43,19 @@ class OrderRepository {
   }
 
   async placeOrder ({order, user}) {
-    const {blockChain: {address}} = user
-    const {gameId, orderType, amount, odd, outcome} = order
-    const result = await placeOrder(gameId, orderType, amount, odd, outcome, address)
-
-    return Promise.resolve(result)
+    try {
+      const {blockChain: {address}} = user
+      const {gameId, orderType, amount, odd, outcome} = order
+      const account = await getDefaultAccount(0)
+      const result = await placeOrder(gameId, orderType, amount, odd, outcome, address, account)
+      const orderId = getMutationResultId(result, 'orderId')
+      // const orderId = result.logs[1].args.orderId.toString()
+      const schema = await getOrderById(gameId, orderId)
+      const saveOrder = await this.saveOrder(schema)
+      return Promise.resolve(saveOrder)
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
 }
 

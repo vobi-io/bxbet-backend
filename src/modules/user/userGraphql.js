@@ -121,18 +121,19 @@ module.exports = ({
   UserTC.addResolver({
     name: 'getBalance',
     args: {},
-    type: ` type Balance {
-      amount: Number,
-      blockAmount: Number
+    type: `type Balance {
+      amount: Float,
+      blockAmount: Float
     }`,
-    resolve: ({ context: { user } }) => userRepository.getBalance(user)
+    resolve: ({ context: { user } }) => userRepository.getBalance({user})
   })
 
   schemaComposer
     .rootQuery()
     .addFields({
       ...attachToAll(isAuthenticated)({
-        me: UserTC.getResolver('me')
+        me: UserTC.getResolver('me'),
+        getBalance: UserTC.getResolver('getBalance')
       })
     })
 
