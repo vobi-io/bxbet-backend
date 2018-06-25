@@ -7,6 +7,7 @@ var { transferEvent, unblockTokensEvent, blockTokensEvent, getBalance } = requir
 class UserRepository {
   constructor ({ db }) {
     this.db = db
+    this.updateBalance = this.updateBalance.bind(this)
     transferEvent(this.updateUsersByTransfer)
     unblockTokensEvent(this.updateBalance)
     blockTokensEvent(this.updateBalance)
@@ -28,7 +29,11 @@ class UserRepository {
       await this.db.UserModel.update(
         { 'blockChain.address': address },
         {
-          $set: { balance }
+          $set: {
+            amount: Number(balance.amount),
+            blockAmount: Number(balance.blockAmount),
+            owner: String(balance.owner)
+          }
         },
         { upsert: true })
 
