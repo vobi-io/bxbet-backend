@@ -155,7 +155,7 @@ const addGame = (_title, _team1, _team2, _category, _startDate, _endDate, status
 */
 const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, _player, account) => mutation('placeOrder', account, null, _gameId,
                                                           _orderType, _amount, _odd, _outcome, _player)
-const giveFreeTokens = (toUserAccount, amount = 200) => {
+const giveFreeTokens = (toUserAccount, amount = 20000) => {
   return mutation('giveFreeTokens', bxbetAccount, null, amount, toUserAccount, freeTokens)
 }
 
