@@ -142,8 +142,8 @@ const getBalance = (account) => query('getBalance', account).then(g => {
 })
 
 // mutation
-const addGame = (_title, _team1, _team2, _category, _startDate, _endDate, status, _owner, account) =>
-   mutation('addGame', account, null, _title, _team1, _team2, _category, _startDate, _endDate, status, _owner)
+const addGame = (_team1, _team2, _category, _startDate, _endDate, status, _owner, account) =>
+   mutation('addGame', account, null, _team1, _team2, _category, _startDate, _endDate, status, _owner)
 
 /**
 *

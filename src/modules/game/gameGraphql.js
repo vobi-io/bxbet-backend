@@ -26,7 +26,6 @@ module.exports = ({GameModel, gameRepository, TC}) => {
   GameTC.addResolver({
     name: 'createGame',
     args: {
-      title: 'String',
       team1: 'String',
       team2: 'String',
       category: 'String',

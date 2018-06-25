@@ -31,12 +31,12 @@ class GameRepository {
   async createGame ({game, user}) {
     try {
       const {blockChain: {address}} = user
-      const {title, team1, team2, category, startDate, endDate} = game
+      const {team1, team2, category, startDate, endDate} = game
       const account = await getDefaultAccount(0)
 
       const start = new Date(startDate) / 1000
       const end = new Date(endDate) / 1000
-      const result = await addGameInBlockChain(title, team1, team2, category, start, end, 0, address, account)
+      const result = await addGameInBlockChain(team1, team2, category, start, end, 0, address, account)
       const gameId = getMutationResultId(result, 'gameId')
       const schema = await getGameById(gameId)
       const saveGame = await this.saveGame(schema)

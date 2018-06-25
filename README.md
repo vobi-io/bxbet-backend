@@ -19,7 +19,7 @@
 
 #### Seed fakes games
 ``` npm run seed:games 10```
-``` npm run seed:orders 10```
+``` npm run seed:orders 100```
 ``` npm run seed:uses 10```
 
 
