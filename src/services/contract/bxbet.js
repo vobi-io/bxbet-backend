@@ -107,7 +107,6 @@ const unblockTokensEvent = (cb) => eventListener('UnblockTokens', cb)
 const getGame = (_gameId, account) => query('getGame', account, Number(_gameId)).then(g => {
   return Promise.resolve({
     gameId: Number(g[0]),
-    title: g[1],
     team1: g[2],
     team2: g[3],
     category: g[4],
