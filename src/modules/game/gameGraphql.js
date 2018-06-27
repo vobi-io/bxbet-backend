@@ -46,10 +46,27 @@ module.exports = ({GameModel, gameRepository, TC}) => {
     resolve: ({ args, context: { user } }) => gameRepository.finishGame({...args, user})
   })
 
+  GameTC.addResolver({
+    name: 'gameReport',
+    args: {
+      gameId: 'Float'
+    },
+    type: `type GameReport {
+      total: Float,
+      team1: Float,
+      team2: Float,
+      draw: Float,
+    }`,
+    resolve: ({ args, context: { user } }) => gameRepository.gameReport({...args, user})
+  })
+
  // register queries
   schemaComposer
    .rootQuery()
-   .addFields(queries)
+   .addFields({
+     ...queries,
+     gameReport: GameTC.get('$gameReport')
+   })
 
  // register mutations
   schemaComposer
@@ -58,7 +75,6 @@ module.exports = ({GameModel, gameRepository, TC}) => {
      ...attachToAll(isAuthenticated)({
        createGame: GameTC.get('$createGame'),
        finishGame: GameTC.get('$finishGame')
-
      })
    })
 

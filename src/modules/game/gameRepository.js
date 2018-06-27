@@ -54,6 +54,43 @@ class GameRepository {
     const saveGame = await this.saveGame(schema)
     return Promise.resolve(saveGame)
   }
+
+  async gameReport ({gameId}) {
+    try {
+      const result = await this.db.OrderModel.aggregate([
+        {'$match': { gameId }},
+        {
+          '$group': {
+            _id: '$outcome',
+            total: {$sum: 1}
+          }
+        }
+      ])
+      let data = {
+        total: 0,
+        team1: 0,
+        team2: 0,
+        draw: 0
+      }
+      result.map(i => {
+        switch (i._id) {
+          case 0:
+            data.team1 = i.total
+            break
+          case 1:
+            data.draw = i.total
+            break
+          case 2:
+            data.team2 = i.total
+            break
+        }
+        data.total += i.total
+      })
+      return data
+    } catch (err) {
+      return Promise.reject(err)
+    }
+  }
 }
 
 module.exports = GameRepository
