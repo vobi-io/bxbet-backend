@@ -16,7 +16,7 @@ module.exports = (mongoose) => {
   const userSchema = new Schema({
     creationDate: { type: Date },
     modified: { type: Date },
-    modifierUser: { type: Schema.Types.ObjectId, ref: 'User' },
+    modifierUser: { type: Schema.Types.ObjectId, ref: 'user' },
     firstName: { type: String },
     lastName: { type: String },
     description: { type: String }, // profile description
