@@ -68,6 +68,12 @@ module.exports = (app) => {
     }
   })))
 
+  /**
+   * Run blockChain event watcher
+   */
+  const watcher = require('app/services/contract/eventWatcher')
+  watcher.runWatcher()
+
   // catch 404
   app.use((req, res) => {
     res.notFound()

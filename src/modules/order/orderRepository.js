@@ -1,6 +1,7 @@
 /* eslint handle-callback-err:0 */
 'use strict'
-var { orderEvent, getGame: getGameFromBlockChain, placeOrder, getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
+var { getGame: getGameFromBlockChain, placeOrder,
+   getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
 var gameModule = require('app/modules/game')
 var _ = require('lodash')
 
@@ -8,19 +9,7 @@ class OrderRepository {
   constructor ({db}) {
     this.db = db
     this.saveOrder = this.saveOrder.bind(this)
-    orderEvent(this.saveOrder)
     this.gameRepository = gameModule.getRepository(this.db)
-
-    setTimeout(() => {
-      // getGameFromBlockChain(3).then(i => {
-      //   console.log(i, 'aaaa')
-
-      //   getOrderById(3, 3).then(y => {
-      //     console.log(y)
-      //   })
-      //   // placeOrder(3, 1, 89, 1, 1, 1528892459)
-      // })
-    }, 2000)
   }
 
   async saveOrder (schema) {
