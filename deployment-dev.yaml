@@ -1,0 +1,19 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: bxbetapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bxbetapi
+  template:
+    metadata:
+      labels:
+        app: bxbetapi
+    spec:
+      containers:
+      - name: bxbetapi
+        image: gcr.io/optimal-sun-208612/bxbet-api:latest
+        ports:
+        - containerPort: 7070
