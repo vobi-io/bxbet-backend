@@ -25,7 +25,9 @@ class OrderRepository {
       schema.game = game._id
       await this.db.OrderModel.update(
         {orderId, gameId},
-        schema,
+        {$set: {
+          ...schema
+        }},
         {upsert: true, setDefaultsOnInsert: true})
 
       let order = await this.db.OrderModel.findOne({orderId})
