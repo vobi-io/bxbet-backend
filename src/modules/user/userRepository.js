@@ -29,7 +29,7 @@ class UserRepository {
       var upBalance = {
         amount: Number(balance.amount),
         blockAmount: Number(balance.blockAmount),
-        owner: String(balance.owner)
+        owner: (String(balance.owner)).toLocaleLowerCase()
       }
       await this.db.UserModel.update(
         { 'blockChain.address': address },

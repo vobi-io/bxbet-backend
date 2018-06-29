@@ -4,7 +4,7 @@ module.exports = (mongoose) => {
 
   let orderSchema = new Schema({
     orderId: {type: Number, description: 'Order Id in Blockchain'},
-    player: {type: String, description: 'Player address in Blockchain'},
+    player: {type: String, description: 'Player address in Blockchain', lowercase: true},
     gameId: {type: Number, description: 'Game id in Blockchain'},
     game: { type: Schema.Types.ObjectId, ref: 'Game' },
     orderType: {type: Number, description: 'Buy=0, Sell=1'},

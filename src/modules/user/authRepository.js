@@ -36,7 +36,7 @@ class AuthRepository {
       },
       role: role //  default role
     }
-
+    blockChain.address = blockChain.address.toLowerCase()
     await giveFreeTokens(blockChain.address)
     blockChain.schema = await getBalance(blockChain.address)
     schema.blockChain = blockChain
