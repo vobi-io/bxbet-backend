@@ -2,14 +2,14 @@
 'use strict'
 var { getGame: getGameFromBlockChain, placeOrder,
    getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
-var gameModule = require('app/modules/game')
+
 var _ = require('lodash')
 
 class OrderRepository {
-  constructor ({db}) {
+  constructor ({db, gameRepository}) {
     this.db = db
     this.saveOrder = this.saveOrder.bind(this)
-    this.gameRepository = gameModule.getRepository(this.db)
+    this.gameRepository = gameRepository
   }
 
   async saveOrder (schema) {

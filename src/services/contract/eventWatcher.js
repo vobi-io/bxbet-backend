@@ -7,9 +7,9 @@ var { orderEvent, gameEvent, transferEvent,
 
 const runWatcher = async (db) => {
   try {
-    const userRepository = userModule.getUserRepository({db})
-    const gameRepository = gameModule.getRepository({ db })
-    const orderRepository = orderModule.getRepository({db})
+    const userRepository = userModule.getUserRepository(db)
+    const gameRepository = gameModule.getRepository(db)
+    const orderRepository = orderModule.getRepository(db)
     orderEvent(orderRepository.saveOrder)
     gameEvent(gameRepository.saveGame)
     unblockTokensEvent(userRepository.updateBalance)
