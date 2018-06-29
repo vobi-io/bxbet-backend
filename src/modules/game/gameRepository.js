@@ -2,6 +2,7 @@
 'use strict'
 var { addGame: addGameInBlockChain, getDefaultAccount,
   getMutationResultId, getGame, finishGame } = require('app/services/contract')
+var _ = require('lodash')
 
 class GameRepository {
   constructor ({db}) {
@@ -15,10 +16,15 @@ class GameRepository {
 
   async saveGame (schema) {
     try {
+      if (!schema || _.isEmpty(schema)) {
+        return Promise.resolve()
+      }
       const gameId = Number(schema.gameId)
       await this.db.GameModel.update(
         {gameId: gameId},
-        schema,
+        {$set: {
+          ...schema
+        }},
         {upsert: true, setDefaultsOnInsert: true})
 
       let game = await this.db.GameModel.findOne({gameId})

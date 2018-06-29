@@ -6,7 +6,7 @@ import "./balance.sol";
 
 contract BXBet is Owned, Balance {
     mapping(uint => Game) games;
-    enum GameStatus { Open, Finished }
+    enum GameStatus { FinishedDraw, FinishedOne, FinishedTwo, Open }
     enum OrderType { Buy, Sell }
     enum OrderStatus { Open, Matched, Win, Lose, Closed }
     enum OrderOutcome {Draw, One, Two }
@@ -72,7 +72,7 @@ contract BXBet is Owned, Balance {
 
     function finishGame(uint _gameId, uint outcome) public {
         Game storage game = games[_gameId];
-        require(game.status != GameStatus.Finished);
+        require(game.status == GameStatus.Open);
         for (uint i = 0; i < game.totalOrders; i++) {
             Order storage order = game.orders[i];
             if (order.status != OrderStatus.Closed) {
@@ -117,7 +117,7 @@ contract BXBet is Owned, Balance {
                 }
             }
         }
-        game.status = GameStatus.Finished;
+        game.status = GameStatus(outcome);
         emitGameEvent(game);
     }
 

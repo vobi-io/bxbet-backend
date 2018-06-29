@@ -8,7 +8,7 @@ module.exports = (mongoose) => {
     category: {type: String, description: 'Football, Basketball, etc...'},
     startDate: {type: Number, description: 'Game start date'},
     endDate: {type: Number, description: 'Game end date'},
-    status: {type: Number, description: 'Open=0, Finished=1'},
+    status: {type: Number, description: 'FinishedDraw=0, FinishedOne=1, FinishedTwo=2, Open=3'},
     owner: {type: String},
     totalOrders: {type: Number, default: 0, description: 'Total orders'},
     created: {type: Date, default: Date.now},
