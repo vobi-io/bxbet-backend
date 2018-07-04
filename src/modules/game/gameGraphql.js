@@ -86,14 +86,6 @@ module.exports = ({GameModel, gameRepository, TC}) => {
     }
   })
 
-  // var GameMaxOdds = `type GameMaxOdds {
-  //   drawBuy: [OddReport],
-  //   drawSell: [OddReport],
-  //   team1Buy: [OddReport],
-  //   team1Sell: [OddReport],
-  //   team2Buy: [OddReport],
-  //   team2Sell: [OddReport],
-  // }`
   GameTC.addResolver({
     name: 'getGameMaxOdds',
     args: {
