@@ -60,12 +60,56 @@ module.exports = ({GameModel, gameRepository, TC}) => {
     resolve: ({ args, context: { user } }) => gameRepository.gameReport({...args, user})
   })
 
+  // const OddReport = schemaComposer.TypeComposer.create({
+  //   name: 'OddReport',
+  //   fields: {
+  //     odd: 'Float',
+  //     amount: 'Float',
+  //     lastName: 'String'
+  //   }
+  // })
+
+  var OddReport = `type OddReport{
+    odd: Float
+    amount: Float
+  }`
+
+  const GameMaxOdds = schemaComposer.TypeComposer.create({
+    name: 'GameMaxOdds',
+    fields: {
+      drawBuy: [OddReport],
+      drawSell: [OddReport],
+      team1Buy: [OddReport],
+      team1Sell: [OddReport],
+      team2Buy: [OddReport],
+      team2Sell: [OddReport]
+    }
+  })
+
+  // var GameMaxOdds = `type GameMaxOdds {
+  //   drawBuy: [OddReport],
+  //   drawSell: [OddReport],
+  //   team1Buy: [OddReport],
+  //   team1Sell: [OddReport],
+  //   team2Buy: [OddReport],
+  //   team2Sell: [OddReport],
+  // }`
+  GameTC.addResolver({
+    name: 'getGameMaxOdds',
+    args: {
+      gameId: 'Float'
+    },
+    type: GameMaxOdds,
+    resolve: ({ args, context: { user } }) => gameRepository.getGameMaxOdds({...args})
+  })
+
  // register queries
   schemaComposer
    .rootQuery()
    .addFields({
      ...queries,
-     gameReport: GameTC.get('$gameReport')
+     gameReport: GameTC.get('$gameReport'),
+     getGameMaxOdds: GameTC.get('$getGameMaxOdds')
    })
 
  // register mutations

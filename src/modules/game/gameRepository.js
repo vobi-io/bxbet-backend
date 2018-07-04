@@ -80,10 +80,10 @@ class GameRepository {
       }
       result.map(i => {
         switch (i._id) {
-          case 0:
+          case 1:
             data.team1 = i.total
             break
-          case 1:
+          case 0:
             data.draw = i.total
             break
           case 2:
@@ -92,6 +92,35 @@ class GameRepository {
         }
         data.total += i.total
       })
+      return data
+    } catch (err) {
+      return Promise.reject(err)
+    }
+  }
+
+  async getGameMaxOdds ({gameId}) {
+    try {
+      const getQuery = (orderType, outcome) => {
+        return [
+          {$match: {orderType, outcome, gameId}},
+          {$sort: {odd: -1}},
+          {$limit: 3},
+          {$project: {odd: 1, amount: 1, outcome: 1}}
+        ]
+      }
+
+      const [drawBuy, drawSell, team1Buy, team1Sell,
+        team2Buy, team2Sell] = await Promise.all([
+          this.db.OrderModel.aggregate(getQuery(0, 0)), // Draw - Buy
+          this.db.OrderModel.aggregate(getQuery(0, 1)), // Draw - Sell
+          this.db.OrderModel.aggregate(getQuery(1, 0)), // One - Buy
+          this.db.OrderModel.aggregate(getQuery(1, 1)), // One - Sell
+          this.db.OrderModel.aggregate(getQuery(2, 0)), // Two - Buy
+          this.db.OrderModel.aggregate(getQuery(2, 1)) // Two - Sell
+        ])
+      const data = {
+        drawBuy, drawSell, team1Buy, team1Sell, team2Buy, team2Sell
+      }
       return data
     } catch (err) {
       return Promise.reject(err)
