@@ -16,8 +16,8 @@ contract BXBet is Owned, Balance {
     // We use the struct datatype to store the event information.
     struct Game {
         uint id;
-        string team1;
-        string team2;
+        string homeTeam;
+        string awayTeam;
         string category;
         uint startDate;
         uint endDate;
@@ -49,19 +49,19 @@ contract BXBet is Owned, Balance {
             totalGames = 0;
         }
 
-    event GameEvent(uint gameId, string team1, string team2, string category, uint startDate,
+    event GameEvent(uint gameId, string homeTeam, string awayTeam, string category, uint startDate,
         uint endDate, uint status, address owner, uint totalOrders);
 
     event OrderEvent(uint orderId, address player, uint gameId, OrderType orderType,
         uint amount, uint odd, uint outcome, uint status, uint matchedOrderId);
 
-    function addGame(string _team1, string _team2, string _category,
+    function addGame(string _homeTeam, string _awayTeam, string _category,
         uint _startDate, uint _endDate, uint status, address owner) public returns (uint) {
         // require (now > _startDate);
         require(_startDate < _endDate);
         totalGames += 1;
         uint gameIndex = totalGames - 1;
-        Game memory game = Game(gameIndex, _team1, _team2, _category,
+        Game memory game = Game(gameIndex, _homeTeam, _awayTeam, _category,
             _startDate, _endDate, GameStatus(status), owner, 0);
         games[gameIndex] = game;
 
@@ -124,7 +124,7 @@ contract BXBet is Owned, Balance {
     function getGame(uint _gameId) public view
         returns (uint, string, string, string, uint, uint, GameStatus, address, uint) {
             Game memory game = games[_gameId];
-            return (game.id, game.team1, game.team2, game.category, game.startDate,
+            return (game.id, game.homeTeam, game.awayTeam, game.category, game.startDate,
                 game.endDate, game.status, game.owner, game.totalOrders);
         }
 
@@ -258,7 +258,7 @@ contract BXBet is Owned, Balance {
     }
 
     function emitGameEvent(Game game) private {
-        emit GameEvent(game.id, game.team1, game.team2,
+        emit GameEvent(game.id, game.homeTeam, game.awayTeam,
             game.category, game.startDate, game.endDate, uint(game.status),
             game.owner, game.totalOrders);
     }

@@ -37,12 +37,12 @@ const seedData = async (number) => {
     console.log(account, 'dwadad')
     const users = times(number, async () => {
       const dtNow = Math.round(new Date() / 1000)
-      const team1 = faker.address.country()
-      const team2 = faker.address.country()
+      const homeTeam = faker.address.country()
+      const awayTeam = faker.address.country()
       const startDate = dtNow + faker.random.number({ min: 10000, max: 200000 })
       const endDate = startDate + faker.random.number({ min: 10000, max: 200000 })
 
-      return addGame(team1, team2, 'Football', startDate, endDate, 3, account, account)
+      return addGame(homeTeam, awayTeam, 'Football', startDate, endDate, 3, account, account)
     })
     const results = await Promise.all(users)
     exit(`Successfully seeded ${results.length} games`)

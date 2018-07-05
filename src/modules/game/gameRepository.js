@@ -37,13 +37,13 @@ class GameRepository {
   async createGame ({game, user}) {
     try {
       const {blockChain: {address}} = user
-      const {team1, team2, category, startDate, endDate} = game
+      const {homeTeam, awayTeam, category, startDate, endDate} = game
       const account = await getDefaultAccount(0)
 
       const dtNow = Math.round(new Date() / 1000)
       const start = dtNow
       const end = dtNow + 1000
-      const result = await addGameInBlockChain(team1, team2, category, start, end, 0, address, account)
+      const result = await addGameInBlockChain(homeTeam, awayTeam, category, start, end, 0, address, account)
       const gameId = getMutationResultId(result, 'gameId')
       const schema = await getGame(gameId)
       const saveGame = await this.saveGame(schema)
@@ -74,20 +74,20 @@ class GameRepository {
       ])
       let data = {
         total: 0,
-        team1: 0,
-        team2: 0,
+        homeTeam: 0,
+        awayTeam: 0,
         draw: 0
       }
       result.map(i => {
         switch (i._id) {
           case 1:
-            data.team1 = i.total
+            data.homeTeam = i.total
             break
           case 0:
             data.draw = i.total
             break
           case 2:
-            data.team2 = i.total
+            data.awayTeam = i.total
             break
         }
         data.total += i.total
@@ -109,8 +109,8 @@ class GameRepository {
         ]
       }
 
-      const [drawBuy, drawSell, team1Buy, team1Sell,
-        team2Buy, team2Sell] = await Promise.all([
+      const [drawBuy, drawSell, homeTeamBuy, homeTeamSell,
+        awayTeamBuy, awayTeamSell] = await Promise.all([
           this.db.OrderModel.aggregate(getQuery(0, 0)), // Draw - Buy
           this.db.OrderModel.aggregate(getQuery(0, 1)), // Draw - Sell
           this.db.OrderModel.aggregate(getQuery(1, 0)), // One - Buy
@@ -119,7 +119,7 @@ class GameRepository {
           this.db.OrderModel.aggregate(getQuery(2, 1)) // Two - Sell
         ])
       const data = {
-        drawBuy, drawSell, team1Buy, team1Sell, team2Buy, team2Sell
+        drawBuy, drawSell, homeTeamBuy, homeTeamSell, awayTeamBuy, awayTeamSell
       }
       return data
     } catch (err) {

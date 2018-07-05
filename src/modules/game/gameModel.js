@@ -3,8 +3,8 @@ module.exports = (mongoose) => {
 
   let gameSchema = new Schema({
     gameId: {type: Number, description: 'Game id in Blockchain'},
-    team1: {type: String},
-    team2: {type: String},
+    homeTeam: {type: String},
+    awayTeam: {type: String},
     category: {type: String, description: 'Football, Basketball, etc...'},
     startDate: {type: Number, description: 'Game start date'},
     endDate: {type: Number, description: 'Game end date', index: true},

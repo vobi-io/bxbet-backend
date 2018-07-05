@@ -26,8 +26,8 @@ module.exports = ({GameModel, gameRepository, TC}) => {
   GameTC.addResolver({
     name: 'createGame',
     args: {
-      team1: 'String',
-      team2: 'String',
+      homeTeam: 'String',
+      awayTeam: 'String',
       category: 'String',
       startDate: 'Date',
       endDate: 'Date'
@@ -53,8 +53,8 @@ module.exports = ({GameModel, gameRepository, TC}) => {
     },
     type: `type GameReport {
       total: Float,
-      team1: Float,
-      team2: Float,
+      homeTeam: Float,
+      awayTeam: Float,
       draw: Float,
     }`,
     resolve: ({ args, context: { user } }) => gameRepository.gameReport({...args, user})
@@ -70,10 +70,10 @@ module.exports = ({GameModel, gameRepository, TC}) => {
     fields: {
       drawBuy: [OddReport],
       drawSell: [OddReport],
-      team1Buy: [OddReport],
-      team1Sell: [OddReport],
-      team2Buy: [OddReport],
-      team2Sell: [OddReport]
+      homeTeamBuy: [OddReport],
+      homeTeamSell: [OddReport],
+      awayTeamBuy: [OddReport],
+      awayTeamSell: [OddReport]
     }
   })
 

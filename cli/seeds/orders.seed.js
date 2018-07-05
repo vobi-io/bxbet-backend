@@ -6,8 +6,6 @@ const colors = require('colors')
 const faker = require('faker')
 const config = require('../../src/config')
 const db = require('../../src/db')(config.database.connection, 'Main')
-const Utils = require('../../src/utils/Utils')
-const GameModel = require('../../src/modules/game/gameModel')(db)
 const { placeOrder, getDefaultAccount } = require('../../src/services/contract')
 
 const exit = message => {

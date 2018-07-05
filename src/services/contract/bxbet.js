@@ -126,8 +126,8 @@ const unblockTokensEvent = (cb) => eventListener('UnblockTokens', (res) => {
 const getGame = (_gameId, account) => query('getGame', account, Number(_gameId)).then(g => {
   return Promise.resolve({
     gameId: Number(g[0]),
-    team1: g[1],
-    team2: g[2],
+    homeTeam: g[1],
+    awayTeam: g[2],
     category: g[3],
     startDate: Number(g[4]),
     endDate: Number(g[5]),
@@ -160,8 +160,8 @@ const getBalance = (account) => query('getBalance', account).then(g => {
 })
 
 // mutation
-const addGame = (_team1, _team2, _category, _startDate, _endDate, status, _owner, account) =>
-   mutation('addGame', account, null, _team1, _team2, _category, _startDate, _endDate, status, _owner)
+const addGame = (_homeTeam, _awayTeam, _category, _startDate, _endDate, status, _owner, account) =>
+   mutation('addGame', account, null, _homeTeam, _awayTeam, _category, _startDate, _endDate, status, _owner)
 
 /**
 *
