@@ -180,7 +180,8 @@ contract BXBet is Owned, Balance {
           blockTokens(order.player, order.amount);
         }else{
           //Block tokens for this orders when is Sell order
-          blockTokens(order.player, order.amount);
+          uint amount = order.amount * order.odd
+          blockTokens(order.player, amount);
         }
     }
 
@@ -190,7 +191,8 @@ contract BXBet is Owned, Balance {
           unblockTokens(order.player, order.amount);
         }else{
           //Block tokens for this orders
-          unblockTokens(order.player, order.amount);
+           uint amount = order.amount * order.odd
+          unblockTokens(order.player, amount);
         }
     }
 
