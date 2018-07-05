@@ -230,7 +230,6 @@ module.exports = {
   createAccount,
   finishGame,
   addGame,
-  freeTokens,
   getDefaultAccount,
   getBexbetAccount,
   transferEvent,

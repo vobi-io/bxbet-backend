@@ -43,7 +43,7 @@ const seedData = async (number) => {
       const orderType = faker.random.number({ min: 0, max: 1 })
       const amount = faker.random.number({ min: 50, max: 55 })
       const outcome = faker.random.number({ min: 0, max: 2 })
-      const odd = faker.random.number({ min: 1, max: 2 })
+      const odd = faker.random.number({ min: 1, max: 3 })
       const dtNow = Math.round(new Date() / 1000)
       return placeOrder(gameId, orderType, amount, odd, outcome, account, account)
     })
