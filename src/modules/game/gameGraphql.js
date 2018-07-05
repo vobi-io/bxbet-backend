@@ -60,15 +60,6 @@ module.exports = ({GameModel, gameRepository, TC}) => {
     resolve: ({ args, context: { user } }) => gameRepository.gameReport({...args, user})
   })
 
-  // const OddReport = schemaComposer.TypeComposer.create({
-  //   name: 'OddReport',
-  //   fields: {
-  //     odd: 'Float',
-  //     amount: 'Float',
-  //     lastName: 'String'
-  //   }
-  // })
-
   var OddReport = `type OddReport{
     odd: Float
     amount: Float
