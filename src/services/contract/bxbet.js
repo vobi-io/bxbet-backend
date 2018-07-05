@@ -4,7 +4,7 @@ var Artifacts = require('../../../build/contracts/BXBet.json')
 var Contract = require('truffle-contract')
 var Web3 = require('web3')
 const gas = 3000000
-const freeTokens = 100
+const decimal = 100
 
 let bxbetAccount = '0x291c32452cd81eeaa4d32860d18fb50911dab602'
 
@@ -98,10 +98,29 @@ const mutation = async (functionName, from, to, ...args) => {
 
 // events
 const gameEvent = (cb) => eventListener('GameEvent', cb)
-const orderEvent = (cb) => eventListener('OrderEvent', cb)
-const transferEvent = (cb) => eventListener('Transfer', cb)
-const blockTokensEvent = (cb) => eventListener('BlockTokens', cb)
-const unblockTokensEvent = (cb) => eventListener('UnblockTokens', cb)
+const orderEvent = (cb) => eventListener('OrderEvent', (res) => {
+  const newObj = res
+  newObj.amount = Number(newObj.amount / decimal)
+  newObj.odd = Number(newObj.odd / decimal)
+  cb(newObj)
+})
+const transferEvent = (cb) => eventListener('Transfer', (res) => {
+  const newObj = res
+  newObj.value = Number(newObj.value / decimal)
+  cb(newObj)
+})
+const blockTokensEvent = (cb) => eventListener('BlockTokens', (res) => {
+  const newObj = res
+  newObj.amount = Number(newObj.amount / decimal)
+  newObj.blockAmount = Number(newObj.blockAmount / decimal)
+  cb({newObj})
+})
+const unblockTokensEvent = (cb) => eventListener('UnblockTokens', (res) => {
+  const newObj = res
+  newObj.amount = Number(newObj.amount / decimal)
+  newObj.blockAmount = Number(newObj.blockAmount / decimal)
+  cb(newObj)
+})
 
 // query
 const getGame = (_gameId, account) => query('getGame', account, Number(_gameId)).then(g => {
@@ -124,8 +143,8 @@ const getOrderById = (_gameId, _orderId, account) => query('getOrderById', accou
     player: g[1],
     gameId: Number(g[2]),
     orderType: Number(g[3]),
-    amount: Number(g[4]),
-    odd: Number(g[5]),
+    amount: Number(Number(g[4]) / decimal),
+    odd: Number(g[5]) / decimal,
     outcome: Number(g[6]),
     status: Number(g[7]),
     matchedOrderId: Number(g[8])
@@ -134,8 +153,8 @@ const getOrderById = (_gameId, _orderId, account) => query('getOrderById', accou
 
 const getBalance = (account) => query('getBalance', account).then(g => {
   return Promise.resolve({
-    amount: Number(g[0]),
-    blockAmount: Number(g[1]),
+    amount: Number(g[0]) / decimal,
+    blockAmount: Number(g[1]) / decimal,
     owner: g[2]
   })
 })
@@ -153,9 +172,9 @@ const addGame = (_team1, _team2, _category, _startDate, _endDate, status, _owner
 * @param {Number} _outcome (0 - Draw, 1- One, 2- Two)
 */
 const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, _player, account) => mutation('placeOrder', account, null, _gameId,
-                                                          _orderType, _amount, _odd, _outcome, _player)
+                                                          _orderType, _amount * decimal, _odd * decimal, _outcome, _player)
 const giveFreeTokens = (toUserAccount, amount = 20000) => {
-  return mutation('giveFreeTokens', bxbetAccount, null, amount, toUserAccount, freeTokens)
+  return mutation('giveFreeTokens', bxbetAccount, null, amount * decimal, toUserAccount)
 }
 
 /**
