@@ -282,7 +282,7 @@ contract BXBet is Owned, Balance {
                 newOrder.matchedOrderId = order.id;
                 newOrder.status = OrderStatus.Matched;
 
-                blockTokensByOrderType(order);
+                // blockTokensByOrderType(order);
                 emitOrderEvent(order);
             }
         }
