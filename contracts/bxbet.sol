@@ -49,12 +49,21 @@ contract BXBet is Owned, Balance {
             totalGames = 0;
         }
 
+    /**
+    * Add Game Event
+    */
     event GameEvent(uint gameId, string homeTeam, string awayTeam, string category, uint startDate,
         uint endDate, uint status, address owner, uint totalOrders);
 
+    /**
+    * Place order event
+    */
     event OrderEvent(uint orderId, address player, uint gameId, OrderType orderType,
         uint amount, uint odd, uint outcome, uint status, uint matchedOrderId);
 
+    /**
+    * Add Game
+    */
     function addGame(string _homeTeam, string _awayTeam, string _category,
         uint _startDate, uint _endDate, uint status, address owner) public returns (uint) {
         // require (now > _startDate);
@@ -70,6 +79,9 @@ contract BXBet is Owned, Balance {
         return gameIndex;
     }
 
+    /**
+    * Finish game by gameId and result
+    */
     function finishGame(uint _gameId, uint outcome) public {
         Game storage game = games[_gameId];
         require(game.status == GameStatus.Open);
@@ -121,13 +133,18 @@ contract BXBet is Owned, Balance {
         emitGameEvent(game);
     }
 
+    /**
+    * Get Game by id
+    */
     function getGame(uint _gameId) public view
         returns (uint, string, string, string, uint, uint, GameStatus, address, uint) {
             Game memory game = games[_gameId];
             return (game.id, game.homeTeam, game.awayTeam, game.category, game.startDate,
                 game.endDate, game.status, game.owner, game.totalOrders);
         }
-
+    /**
+    * Get order by game id and order id
+    */
     function getOrderById(uint _gameId, uint _orderId) public view
         returns (uint, address, uint, OrderType, uint, uint, OrderOutcome, OrderStatus, uint) {
             Order memory order = games[_gameId].orders[_orderId];
@@ -136,6 +153,9 @@ contract BXBet is Owned, Balance {
                 order.status, order.matchedOrderId);
         }
 
+    /**
+    * Place order on the game
+    */
     function placeOrder(uint _gameId, uint _orderType, uint _amount, uint _odd, uint _outcome, address _player)
         public payable returns (uint) {
             Game storage game = games[_gameId];
@@ -160,6 +180,9 @@ contract BXBet is Owned, Balance {
             return newOrder.id;
         }
 
+    /**
+    * Give free tokens to signed users
+    */
     function giveFreeTokens(uint _amount, address _toUser) public returns (bool) {
         if(balanceOf[_toUser].owner != _toUser){
           Wallet memory wallet = Wallet(0, 0, _toUser);
@@ -169,11 +192,17 @@ contract BXBet is Owned, Balance {
         return true;
     }
 
+    /**
+    * Get balance
+    */
     function getBalance() public view returns (uint, uint, address) {
         Wallet memory wallet = balanceOf[msg.sender];
         return (wallet.amount, wallet.blockAmount, wallet.owner);
     }
 
+    /**
+    * Block tokens by order type
+    */
     function blockTokensByOrderType(Order order) private {
         if(order.orderType == OrderType.Buy){
           //Block tokens for this orders when is Buy order
@@ -185,6 +214,9 @@ contract BXBet is Owned, Balance {
         }
     }
 
+    /**
+    * Unblock tokens by order type
+    */
     function unblockTokensByOrder(Order order) private {
         if(order.orderType == OrderType.Buy){
           //Block tokens for this orders
@@ -196,6 +228,10 @@ contract BXBet is Owned, Balance {
         }
     }
 
+
+    /**
+    * Transfer tokens by order type
+    */
     function transferTokensByOrder(Order order, Order matchedOrder, uint outcome) private {
         uint amount;
         address from;
@@ -227,7 +263,9 @@ contract BXBet is Owned, Balance {
         transferTokens(from, to, amount);
     }
 
-
+    /**
+    * Check orders if matched change status as matched and block tokens
+    */
     function checkMatched(uint _gameId, Order newOrder) private returns(Order){
         Game storage game = games[_gameId];
         for (uint i = 0; i < game.totalOrders; i++) {
