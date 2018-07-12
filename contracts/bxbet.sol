@@ -209,13 +209,18 @@ contract BXBet is Owned, Balance {
           blockTokens(order.player, order.amount);
         }else{
           //Block tokens for this orders when is Sell order
-          uint amount = order.amount * order.odd;
+          uint amount = order.amount * order.odd / 100;
           blockTokens(order.player, amount);
         }
     }
 
     /**
     * Unblock tokens by order type
+    *
+    * amount = 300
+    * odd = 140
+    * 300 00 140
+    * 4200000
     */
     function unblockTokensByOrder(Order order) private {
         if(order.orderType == OrderType.Buy){
@@ -282,7 +287,6 @@ contract BXBet is Owned, Balance {
                 newOrder.matchedOrderId = order.id;
                 newOrder.status = OrderStatus.Matched;
 
-                // blockTokensByOrderType(order);
                 emitOrderEvent(order);
             }
         }
