@@ -228,7 +228,7 @@ contract BXBet is Owned, Balance {
           unblockTokens(order.player, order.amount);
         }else{
           //Block tokens for this orders
-           uint amount = order.amount * order.odd;
+           uint amount = order.amount * order.odd / 100;
           unblockTokens(order.player, amount);
         }
     }
@@ -242,7 +242,7 @@ contract BXBet is Owned, Balance {
         address from;
         address to;
         if(order.orderType == OrderType.Buy){ // if is buy order
-            amount = order.odd * order.amount;
+            amount = order.amount * order.odd / 100 ;
             if (order.outcome == OrderOutcome(outcome)) {
                 //if game's outcome equals order outcome
                 from = matchedOrder.player;
