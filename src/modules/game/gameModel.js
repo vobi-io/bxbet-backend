@@ -2,9 +2,9 @@ module.exports = (mongoose) => {
   let Schema = mongoose.Schema
 
   let gameSchema = new Schema({
-    gameId: {type: Number, description: 'Game id in Blockchain'},
-    homeTeam: {type: String},
-    awayTeam: {type: String},
+    gameId: {type: Number, description: 'Game id in Blockchain', index: true},
+    homeTeam: {type: String, index: true},
+    awayTeam: {type: String, index: true},
     category: {type: String, description: 'Football, Basketball, etc...'},
     startDate: {type: Number, description: 'Game start date'},
     endDate: {type: Number, description: 'Game end date', index: true},
