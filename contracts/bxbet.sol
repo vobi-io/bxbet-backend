@@ -158,9 +158,10 @@ contract BXBet is Owned, Balance {
     */
     function placeOrder(uint _gameId, uint _orderType, uint _amount, uint _odd, uint _outcome, address _player)
         public payable returns (uint) {
-            Game storage game = games[_gameId];
             require (_amount > 0);
             require (_odd > 0);
+            Game storage game = games[_gameId];
+            require (game.status == GameStatus.Open);
             // require (now < game.startDate);
 
             uint newId = game.totalOrders;
