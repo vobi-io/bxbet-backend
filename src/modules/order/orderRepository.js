@@ -47,6 +47,11 @@ class OrderRepository {
       // const orderId = result.logs[1].args.orderId.toString()
       const schema = await getOrderById(gameId, orderId)
       const saveOrder = await this.saveOrder(schema)
+      global.sendRealTimeInfoToUsers([], {
+        type: 'placeOrder',
+        order: saveOrder,
+        fromUserId: user._id
+      })
       return Promise.resolve(saveOrder)
     } catch (err) {
       return Promise.reject(err)

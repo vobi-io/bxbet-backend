@@ -47,6 +47,12 @@ class GameRepository {
       const gameId = getMutationResultId(result, 'gameId')
       const schema = await getGame(gameId)
       const saveGame = await this.saveGame(schema)
+
+      global.sendRealTimeInfoToUsers([], {
+        type: 'createGame',
+        game: saveGame,
+        fromUserId: user._id
+      })
       return Promise.resolve(saveGame)
     } catch (err) {
       return Promise.reject(err)
@@ -58,6 +64,12 @@ class GameRepository {
     await finishGame(gameId, outcome, account)
     const schema = await getGame(gameId)
     const saveGame = await this.saveGame(schema)
+
+    global.sendRealTimeInfoToUsers([], {
+      type: 'finishGame',
+      game: saveGame,
+      fromUserId: user._id
+    })
     return Promise.resolve(saveGame)
   }
 
