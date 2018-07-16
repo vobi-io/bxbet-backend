@@ -112,7 +112,7 @@ class GameRepository {
 
   async getGameMaxOdds ({gameId}) {
     try {
-      const getQuery = (orderType, outcome) => {
+      const getQuery = (outcome, orderType) => {
         return [
           {$match: {orderType, outcome, gameId}},
           {$sort: {odd: -1}},
