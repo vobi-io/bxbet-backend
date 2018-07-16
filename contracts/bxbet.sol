@@ -245,7 +245,7 @@ contract BXBet is Owned, Balance {
         address from;
         address to;
         if(order.orderType == OrderType.Buy){ // if is buy order
-            amount = order.amount * order.odd / 100 ;
+            amount = order.amount * order.odd / 100 - order.amount;
             if (order.outcome == OrderOutcome(outcome)) {
                 //if game's outcome equals order outcome
                 from = matchedOrder.player;
