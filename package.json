@@ -31,7 +31,7 @@
     "start:devDocker": "NODE_ENV=production node bin/www",
     "start:local": "CONFIG=development_local nodemon bin/www",
     "socket": "node socket/index.js",
-    "socket_pm2": "pm2 start socket/index.js --name socket_server_8005",
+    "socket_pm2": "pm2 start socket/index.js --name socket_server_8006",
     "swagger": "apidoc-swagger -i app -o public/swagger",
     "apidoc": "apidoc -i app -o public/doc",
     "test": "NODE_ENV=test mocha --timeout 10000",
