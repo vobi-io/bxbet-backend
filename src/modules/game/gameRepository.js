@@ -50,7 +50,7 @@ class GameRepository {
 
       global.sendRealTimeInfoToUsers([], {
         type: 'createGame',
-        game: saveGame,
+        game: saveGame.toJSON(),
         fromUserId: user._id
       })
       return Promise.resolve(saveGame)
@@ -67,7 +67,7 @@ class GameRepository {
 
     global.sendRealTimeInfoToUsers([], {
       type: 'finishGame',
-      game: saveGame,
+      game: saveGame.toJSON(),
       fromUserId: user._id
     })
     return Promise.resolve(saveGame)
