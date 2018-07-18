@@ -30,7 +30,7 @@ class OrderRepository {
         }},
         {upsert: true, setDefaultsOnInsert: true})
 
-      let order = await this.db.OrderModel.findOne({orderId})
+      let order = await this.db.OrderModel.findOne({orderId, gameId})
       return Promise.resolve(order)
     } catch (err) {
       return Promise.reject(err)
@@ -49,7 +49,7 @@ class OrderRepository {
       const saveOrder = await this.saveOrder(schema)
       global.sendRealTimeInfoToUsers([], {
         type: 'placeOrder',
-        order: saveOrder,
+        order: saveOrder.toJSON(),
         fromUserId: user._id
       })
       return Promise.resolve(saveOrder)
