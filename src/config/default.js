@@ -6,7 +6,7 @@ var rootFolder = path.resolve(__dirname, '..')
 module.exports = {
   port: 8005,
   database: {
-    connection: 'mongodb://localhost:27017/bxbet'
+    connection: 'mongodb://bxbet:V0bi!walkthru@db.vobi.io/bxbet'
   },
   contract: {
     network: 'http://localhost:8545'
