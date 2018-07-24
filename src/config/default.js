@@ -52,7 +52,7 @@ module.exports = {
     // api host
     domainInTemplate: 'http://localhost:8001',
     frontendUrl: 'http://52.40.142.121',
-    defaultFrom: 'contact@walkthru.com'
+    defaultFrom: 'contact@bxbet.com'
   },
   qrCodes: {
     upload: `${rootFolder}/public/qrcodes/`,

@@ -114,7 +114,7 @@ class GameRepository {
     try {
       const getQuery = (outcome, orderType) => {
         return [
-          {$match: {orderType, outcome, gameId}},
+          {$match: {orderType, outcome, gameId, status: 0}},
           {$sort: {odd: -1}},
           {$limit: 3},
           {$project: {odd: 1, amount: 1, outcome: 1}}

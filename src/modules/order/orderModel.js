@@ -14,7 +14,7 @@ module.exports = (mongoose) => {
     status: {type: Number, description: 'Open=0, Matched=1, Win=2, Lose=3, Closed=4'},
     matchedOrderId: {type: Number, description: 'Matched order id in Blockchain'},
 
-    created: {type: Date, default: Date.now},
+    created: {type: Date, default: Date.now, index: true},
     modified: {type: Date}
   }, {})
 
