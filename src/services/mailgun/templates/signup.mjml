@@ -1,57 +1,92 @@
 <mjml>
+  <mj-head>
+    <mj-style inline="inline">
+      .link{
+         color: black;
+         cursor: pointer;
+         text-decoration: underline
+         outline: none;
+      }
+    </mj-style>
+  </mj-head>
   <mj-body>
-    <mj-container>
-      <mj-section background-color="#f8f8f8">
-        <mj-column width="550px" background-color="#FFFFFF">
-          <mj-image width="163" src="https://i.imgur.com/cxc08gh.png"></mj-image>
-          <mj-text font-size="24px" align="center" color="#444343" padding-bottom="5px" padding-top="60px">
-             WELCOME TO BXBET
-          </mj-text>
-          <mj-text font-size="18px" align="center" color="red" padding-bottom="5px" padding-top="60px">
-             Please Read Carefully.
-          </mj-text>
-          <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="15px">
-          bookinggenius is designed to give the property manager a tenant generated Inventory
-           & Condition Report (with Photos) showing the way the rental property looks when the
-           tenant moves in. After Logging in to
-            <a href="http://www.bookinggenius.com" class="link-nostyle">bookinggenius.com</a>
-            submit the tenant contact information along with the rental property address and description. Please input the number of days the tenant is allowed to get the report returned after the lease begin date. The tenant will be sent a link to bookinggenius App and a one time usage code.
-            Thank you for choosing bookinggenius.
-          </mj-text>
-          <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="0px">
-            Please log in to your registration account to view the message.
-          </mj-text>
-          <mj-button align="center" font-size="18px" background-color="#24aae2"
-                color="#FFFFFF" border-radius="2px" width="215px" href="http://www.bookinggenius.com" inner-padding="15px 40px" padding-bottom="30" padding-top="20">
-            bookinggenius
-          </mj-button>
-          <mj-text font-size="16px" align="center" color="#616161" padding-bottom="5px" padding-top="0px">
-            Many thanks for your cooperation,
-          </mj-text>
-        </mj-column>
-      </mj-section>
-       <mj-section padding-top="36" background-color="#f8f8f8">
-         <mj-column>
-          <mj-text align="center" font-size="14px">
-             <div style="display: inline-flex; justify-content: center; align-items: center;">
-              <a href="#" style="color:#616161; text-decoration:none;">
-                Unsubscribe
-              </a>
-              <span style="color:#616161; padding-left: 10px; padding-right: 10px">•</span>
-              <a href="#" style="color:#616161; text-decoration:none;">
-                Privacy Policy
-              </a>
-              <span style="color:#616161; padding-left: 10px; padding-right: 10px">•</span>
-              <a href="#" style="color:#616161; text-decoration:none;">
-                Contact us
-              </a>
-            </div>
-          </mj-text>
-           <mj-text align="center" font-size="12px" color="#8c8c8c">
-            Copyright 2018 bookinggenius. All rights reserved.
-          </mj-text>
-          </mj-column>
-        </mj-section>
-    </mj-container>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-image width="0" src="https://i.imgur.com/3Vh1vSd.png" />
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+          <mj-text font-weight="bold" font-size="18px" align="center">WELCOME TO THE BX MVP</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          The BX MVP is designed to give a first impression of the BX ecosystem.
+          It provides full blockchain-based betting and gives our users the opportunity to bet against each other
+          with the full functionality of a betting exchange.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="18px" font-weight="400">
+          For more details and explanations on the functionality please visit: <a href="https://bx.bet/static/files/whitepaper.pdf" class="link">www.bx.bet/exchange</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          Important: The BX tokens, which are used in the MVP are a dummy currency and not
+          the one, that are being sold in our token sale. There might be some events, in which we
+          will have some promotional events and the real BX tokens are distributed as a price.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          We invite you to join our token sale and become part of the BX community.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          Have Fun!
+        </mj-text>
+        <mj-text align="center" font-size="18px" font-weight="400">Your BX - Team</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400"><a href="https://bx.bet/en/" class="link">www.bx.bet</a></mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#004D80">
+      <mj-column>
+        <mj-image href="https://twitter.com/BXBETico" src="https://i.imgur.com/7daFo3O.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.youtube.com/watch?v=qLY431v0vrI&feature=youtu.be" src="https://i.imgur.com/1hTBmEJ.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.facebook.com/BXBET/" src="https://i.imgur.com/2QJsmI8.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.reddit.com/r/BXBET/" src="https://i.imgur.com/QdhU7vq.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://t.me/bxbet" src="https://i.imgur.com/8WEIACj.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://medium.com/bxbet" src="https://i.imgur.com/ACXKHTO.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.linkedin.com/company/bx-bet/" src="https://i.imgur.com/ezKLl7f.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+    </mj-section>
   </mj-body>
 </mjml>
