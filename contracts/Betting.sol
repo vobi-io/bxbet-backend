@@ -29,7 +29,6 @@ contract Betting is Owned, Balance {
 
     struct OrderMatched {
         uint matchedOrderId;
-        OrderType orderType; // buy or sell
         uint amount; // 100
     }
 
@@ -173,7 +172,7 @@ contract Betting is Owned, Balance {
 
             uint newId = game.totalOrders;
             Order memory newOrder = Order(newId, _player, _gameId, OrderType(_orderType), _amount, _odd,
-                OrderOutcome(_outcome), OrderStatus.Open, NONE);
+                OrderOutcome(_outcome), OrderStatus.Open, 0);
 
             //check matched
             newOrder = checkMatched(_gameId, newOrder);
@@ -285,17 +284,37 @@ contract Betting is Owned, Balance {
         Game storage game = games[_gameId];
         for (uint i = 0; i < game.totalOrders; i++) {
             Order storage order = game.orders[i];
+            uint avalaibleAmount = order.amount - order.matchedAmount
+            uint requestAmount = newOrder.amount - newOrder.matchedAmount
+
+            if(requestAmount <=0){
+              break
+            }
+
             // if orders matched
-            if (order.amount == newOrder.amount &&
+            if (
+                // order.amount == newOrder.amount &&
+                // order.status == OrderStatus.Open
                 order.orderType != newOrder.orderType &&
                 order.odd == newOrder.odd &&
                 order.outcome == newOrder.outcome &&
-                order.status == OrderStatus.Open) {
+                avalaibleAmount > 0 &&
+                requestAmount > 0
+                ) {
+                uint matchedAmount = avalaibleAmount
+                if(avalaibleAmount > requestAmount){
+                  matchedAmount = requestAmount
+                }
 
                 game.orders[i].status = OrderStatus.Matched;
-                game.orders[i].matchedOrderId = newOrder.id;
-                newOrder.matchedOrderId = order.id;
+                game.orders[i].matchedAmount = game.orders[i].matchedAmount + matchedAmount;
+                game.order[i].matchedOrders[newOrder.id] = OrderMatched(newOrder.id, matchedAmount);
+
+                // game.orders[i].matchedOrderId = newOrder.id;
+
+                newOrder.matchedOrders[order.id] = OrderMatched(order.id, matchedAmount);
                 newOrder.status = OrderStatus.Matched;
+                newOrder.matchedAmount = newOrder.matchedAmount + matchedAmount;
 
                 emitOrderEvent(order);
             }
@@ -306,7 +325,7 @@ contract Betting is Owned, Balance {
     function emitOrderEvent(Order order) private {
         emit OrderEvent (order.id, order.player, order.gameId,
                     order.orderType, order.amount, order.odd, uint(order.outcome),
-                    uint(order.status), order.matchedOrderId);
+                    uint(order.status), order.matchedAmount);
     }
 
     function emitGameEvent(Game game) private {
