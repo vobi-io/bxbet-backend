@@ -12,7 +12,7 @@ module.exports = (mongoose) => {
     odd: {type: Number, description: 'Odd of order', index: true},
     outcome: {type: Number, description: 'Draw=0, One=1, Two=2'},
     status: {type: Number, description: 'Open=0, Matched=1, Win=2, Lose=3, Closed=4'},
-    matchedOrderId: {type: Number, description: 'Matched order id in Blockchain'},
+    matchedAmount: {type: Number, description: 'Matched order id in Blockchain'},
 
     created: {type: Date, default: Date.now, index: true},
     modified: {type: Date}

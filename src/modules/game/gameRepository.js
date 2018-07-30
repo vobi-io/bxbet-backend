@@ -116,8 +116,17 @@ class GameRepository {
         return [
           {$match: {orderType, outcome, gameId, status: 0}},
           {$sort: {odd: -1}},
-          {$limit: 3},
-          {$project: {odd: 1, amount: 1, outcome: 1}}
+          {
+            $group: {
+              _id: {
+                orderType: '$orderType',
+                outcome: '$outcomes',
+                gameId: '$gameId'
+              },
+              amount: {$sum: '$amount'}
+            }
+          },
+          {$limit: 3}
         ]
       }
 
@@ -128,7 +137,7 @@ class GameRepository {
           this.db.OrderModel.aggregate(getQuery(1, 0)), // One - Buy
           this.db.OrderModel.aggregate(getQuery(1, 1)), // One - Sell
           this.db.OrderModel.aggregate(getQuery(2, 0)), // Two - Buy
-          this.db.OrderModel.aggregate(getQuery(2, 1)) // Two - Sell
+          this.db.OrderModel.aggregate(getQuery(2, 1))  // Two - Sell
         ])
       const data = {
         drawBuy, drawSell, homeTeamBuy, homeTeamSell, awayTeamBuy, awayTeamSell

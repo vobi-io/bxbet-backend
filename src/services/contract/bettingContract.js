@@ -152,7 +152,7 @@ const getOrderById = (_gameId, _orderId, account) => query('getOrderById', accou
     odd: Number(g[5]) / decimal,
     outcome: Number(g[6]),
     status: Number(g[7]),
-    matchedOrderId: Number(g[8])
+    matchedAmount: Number(g[8])
   })
 })
 

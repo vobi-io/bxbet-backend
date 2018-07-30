@@ -4,7 +4,7 @@ import "./owned.sol";
 import "./balance.sol";
 
 
-contract BXBet is Owned, Balance {
+contract Betting is Owned, Balance {
     mapping(uint => Game) games;
     enum GameStatus { FinishedDraw, FinishedOne, FinishedTwo, Open }
     enum OrderType { Buy, Sell }
@@ -27,6 +27,12 @@ contract BXBet is Owned, Balance {
         mapping (uint => Order) orders;
     }
 
+    struct OrderMatched {
+        uint matchedOrderId;
+        OrderType orderType; // buy or sell
+        uint amount; // 100
+    }
+
     struct Order {
         uint id;
         address player;
@@ -36,7 +42,8 @@ contract BXBet is Owned, Balance {
         uint odd; // 1.5
         OrderOutcome outcome; // 1, x, 2
         OrderStatus status;
-        uint matchedOrderId;
+        uint matchedAmount; // 100
+        mapping(uint => OrderMatched) matchedOrders;
     }
 
      /**
@@ -59,7 +66,7 @@ contract BXBet is Owned, Balance {
     * Place order event
     */
     event OrderEvent(uint orderId, address player, uint gameId, OrderType orderType,
-        uint amount, uint odd, uint outcome, uint status, uint matchedOrderId);
+        uint amount, uint odd, uint outcome, uint status, uint matchedAmount);
 
     /**
     * Add Game
@@ -150,7 +157,7 @@ contract BXBet is Owned, Balance {
             Order memory order = games[_gameId].orders[_orderId];
             return (order.id, order.player, order.gameId, order.orderType, order.amount,
                 order.odd, order.outcome,
-                order.status, order.matchedOrderId);
+                order.status, order.matchedAmount);
         }
 
     /**
