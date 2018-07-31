@@ -1,2 +1,2 @@
 
-module.exports = require('./bxbet')
+module.exports = require('./bettingContract')

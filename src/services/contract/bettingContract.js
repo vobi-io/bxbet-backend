@@ -1,6 +1,6 @@
 'use strict'
 var config = require('app/config')
-var Artifacts = require('../../../build/contracts/BXBet.json')
+var Artifacts = require('../../../build/contracts/Betting.json')
 var Contract = require('truffle-contract')
 var Web3 = require('web3')
 const gas = 3000000
