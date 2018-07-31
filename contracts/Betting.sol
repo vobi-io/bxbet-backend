@@ -190,10 +190,9 @@ contract Betting is Owned, Balance {
             //increase orders number
             game.totalOrders += 1;
 
-             //check matched
-            newOrder = checkMatched(_gameId, newId);
+            //check matched
+            checkMatched(_gameId, newId);
 
-            emitOrderEvent(newOrder);
             return newOrder.id;
         }
 
@@ -305,7 +304,7 @@ contract Betting is Owned, Balance {
                 order.orderType != newOrder.orderType &&
                 order.odd == newOrder.odd &&
                 order.outcome == newOrder.outcome &&
-                order.player != newOrder.player &&
+                // order.player != newOrder.player &&
                 avalaibleAmount > 0 &&
                 requestAmount > 0
                 ) {
@@ -327,6 +326,7 @@ contract Betting is Owned, Balance {
                 emitOrderEvent(order);
             }
         }
+        emitOrderEvent(newOrder);
         return newOrder;
     }
 

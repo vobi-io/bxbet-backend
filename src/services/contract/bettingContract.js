@@ -107,6 +107,7 @@ const orderEvent = (cb) => eventListener('OrderEvent', (res) => {
   const newObj = res
   newObj.amount = Number(newObj.amount / decimal)
   newObj.odd = Number(newObj.odd / decimal)
+  newObj.matchedAmount = Number(newObj.matchedAmount / decimal)
   cb(newObj)
 })
 const transferEvent = (cb) => eventListener('Transfer', (res) => {
@@ -152,7 +153,7 @@ const getOrderById = (_gameId, _orderId, account) => query('getOrderById', accou
     odd: Number(g[5]) / decimal,
     outcome: Number(g[6]),
     status: Number(g[7]),
-    matchedAmount: Number(g[8])
+    matchedAmount: Number(g[8] / decimal)
   })
 })
 
