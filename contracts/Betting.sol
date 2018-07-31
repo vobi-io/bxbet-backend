@@ -42,6 +42,7 @@ contract Betting is Owned, Balance {
         OrderOutcome outcome; // 1, x, 2
         OrderStatus status;
         uint matchedAmount; // 100
+        uint totalMatched;
         mapping(uint => OrderMatched) matchedOrders;
     }
 
@@ -65,7 +66,7 @@ contract Betting is Owned, Balance {
     * Place order event
     */
     event OrderEvent(uint orderId, address player, uint gameId, OrderType orderType,
-        uint amount, uint odd, uint outcome, uint status, uint matchedAmount);
+        uint amount, uint odd, uint outcome, uint status, uint matchedAmount, uint totalMatched);
 
     /**
     * Add Game
@@ -101,28 +102,30 @@ contract Betting is Owned, Balance {
                         if (order.outcome == OrderOutcome(outcome)) {
                            //if game's outcome equals order outcome
                             game.orders[i].status = OrderStatus.Win;
-                            game.orders[order.matchedOrderId].status = OrderStatus.Lose;
+                            // game.orders[order.matchedOrderId].status = OrderStatus.Lose;
                         }else{
                            //if game's outcome does not equals order outcome
                             game.orders[i].status = OrderStatus.Lose;
-                            game.orders[order.matchedOrderId].status = OrderStatus.Win;
+                            // game.orders[order.matchedOrderId].status = OrderStatus.Win;
                         }
                     } else { // if is Sell order
                        if (order.outcome == OrderOutcome(outcome)) {
                             //if game's outcome equals order outcome
                             game.orders[i].status = OrderStatus.Lose;
-                            game.orders[order.matchedOrderId].status = OrderStatus.Win;
+                            // game.orders[order.matchedOrderId].status = OrderStatus.Win;
                        }else{
                            //if game's outcome does not equals order outcome
                             game.orders[i].status = OrderStatus.Win;
-                            game.orders[order.matchedOrderId].status = OrderStatus.Lose;
+                            // game.orders[order.matchedOrderId].status = OrderStatus.Lose;
                        }
                     }
-                    transferTokensByOrder(game.orders[i], game.orders[order.matchedOrderId], outcome);
 
+                    if (order.orderType == OrderType.Buy){
+                        transferTokensByOrder(game.orders[i],outcome);
+                    }
                     //send order events for update
                     emitOrderEvent(game.orders[i]);
-                    emitOrderEvent(game.orders[order.matchedOrderId]);
+                    // emitOrderEvent(game.orders[order.matchedOrderId]);
                 }
 
                 if(order.status == OrderStatus.Open) {
@@ -172,7 +175,7 @@ contract Betting is Owned, Balance {
 
             uint newId = game.totalOrders;
             Order memory newOrder = Order(newId, _player, _gameId, OrderType(_orderType), _amount, _odd,
-                OrderOutcome(_outcome), OrderStatus.Open, 0);
+                OrderOutcome(_outcome), OrderStatus.Open, 0, 0);
 
             //check matched
             newOrder = checkMatched(_gameId, newOrder);
@@ -247,34 +250,42 @@ contract Betting is Owned, Balance {
     * Transfer tokens by order type
     */
     function transferTokensByOrder(Order order, Order matchedOrder, uint outcome) private {
-        uint amount;
+        uint transferAmount;
         address from;
         address to;
-        if(order.orderType == OrderType.Buy){ // if is buy order
-            amount = order.amount * order.odd / 100 - order.amount;
-            if (order.outcome == OrderOutcome(outcome)) {
-                //if game's outcome equals order outcome
-                from = matchedOrder.player;
-                to = order.player;
-            }else{
-                //if game's outcome does not equals order outcome
-                from = order.player;
-                to = matchedOrder.player;
+        Game memory game = games[order.gameId];
+        for (uint i = 0; i <  order.totalMatched; i++) {
+            OrderMatched memory temp = order.matchedOrders[i];
+            uint matchedAmount = temp.amount
+            Order memory matchedOrder = game.orders[temp.matchedOrderId];
+
+            if(order.orderType == OrderType.Buy){ // if is buy order
+                transferAmount = matchedAmount * order.odd / 100 - matchedAmount;
+                if (order.outcome == OrderOutcome(outcome)) {
+                    //if game's outcome equals order outcome
+                    from = matchedOrder.player;
+                    to = order.player;
+                }else{
+                    //if game's outcome does not equals order outcome
+                    from = order.player;
+                    to = matchedOrder.player;
+                }
+            }else{ // if is Sell order
+                transferAmount = matchedAmount;
+                if (order.outcome == OrderOutcome(outcome)) {
+                    //if game's outcome equals order outcome
+                    from = order.player;
+                    to = matchedOrder.player;
+                }else{
+                    //if game's outcome does not equals order outcome
+                    from = matchedOrder.player;
+                    to = order.player;
+                }
             }
-        }else{ // if is Sell order
-          amount = order.amount;
-          if (order.outcome == OrderOutcome(outcome)) {
-              //if game's outcome equals order outcome
-              from = order.player;
-              to = matchedOrder.player;
-          }else{
-              //if game's outcome does not equals order outcome
-              from = matchedOrder.player;
-              to = order.player;
-          }
+          //transfer money
+          transferTokens(from, to, transferAmount);
         }
-        //transfer money
-        transferTokens(from, to, amount);
+
     }
 
     /**
@@ -308,12 +319,16 @@ contract Betting is Owned, Balance {
 
                 game.orders[i].status = OrderStatus.Matched;
                 game.orders[i].matchedAmount = game.orders[i].matchedAmount + matchedAmount;
-                game.order[i].matchedOrders[newOrder.id] = OrderMatched(newOrder.id, matchedAmount);
+                game.orders[i].totalMatched = game.orders[i].totalMatched + 1
+                game.order[i].matchedOrders[game.orders[i].totalMatched] = OrderMatched(newOrder.id, matchedAmount);
+                // if (game.order[i].orderType == OrderType.Buy){
+                // }
 
                 // game.orders[i].matchedOrderId = newOrder.id;
 
-                newOrder.matchedOrders[order.id] = OrderMatched(order.id, matchedAmount);
                 newOrder.status = OrderStatus.Matched;
+                newOrder.matchedOrders[newOrder.totalMatched] = OrderMatched(order.id, matchedAmount);
+                newOrder.totalMatched = newOrder.totalMatched + 1
                 newOrder.matchedAmount = newOrder.matchedAmount + matchedAmount;
 
                 emitOrderEvent(order);
@@ -325,7 +340,7 @@ contract Betting is Owned, Balance {
     function emitOrderEvent(Order order) private {
         emit OrderEvent (order.id, order.player, order.gameId,
                     order.orderType, order.amount, order.odd, uint(order.outcome),
-                    uint(order.status), order.matchedAmount);
+                    uint(order.status), order.matchedAmount, order.totalMatched);
     }
 
     function emitGameEvent(Game game) private {
