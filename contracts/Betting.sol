@@ -304,7 +304,7 @@ contract Betting is Owned, Balance {
                 order.orderType != newOrder.orderType &&
                 order.odd == newOrder.odd &&
                 order.outcome == newOrder.outcome &&
-                // order.player != newOrder.player &&
+                order.player != newOrder.player &&
                 avalaibleAmount > 0 &&
                 requestAmount > 0
                 ) {
