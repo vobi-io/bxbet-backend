@@ -120,8 +120,9 @@ class GameRepository {
             $group: {
               _id: {
                 orderType: '$orderType',
-                outcome: '$outcomes',
-                gameId: '$gameId'
+                outcome: '$outcome',
+                gameId: '$gameId',
+                odd: '$odd'
               },
               amount: {$sum: '$amount'}
             }
@@ -129,6 +130,15 @@ class GameRepository {
           {$limit: 3}
         ]
       }
+      const getRes = (data) => data.map(i => {
+        return {
+          orderType: i._id.orderType,
+          gameId: i._id.gameId,
+          outcome: i._id.outcome,
+          odd: i._id.odd,
+          amount: i.amount
+        }
+      })
 
       const [drawBuy, drawSell, homeTeamBuy, homeTeamSell,
         awayTeamBuy, awayTeamSell] = await Promise.all([
@@ -140,7 +150,12 @@ class GameRepository {
           this.db.OrderModel.aggregate(getQuery(2, 1))  // Two - Sell
         ])
       const data = {
-        drawBuy, drawSell, homeTeamBuy, homeTeamSell, awayTeamBuy, awayTeamSell
+        drawBuy: getRes(drawBuy),
+        drawSell: getRes(drawSell),
+        homeTeamBuy: getRes(homeTeamBuy),
+        homeTeamSell: getRes(homeTeamSell),
+        awayTeamBuy: getRes(awayTeamBuy),
+        awayTeamSell: getRes(awayTeamSell)
       }
       return data
     } catch (err) {
