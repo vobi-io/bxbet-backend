@@ -301,13 +301,11 @@ contract Betting is Owned, Balance {
               break;
             }
 
-            // if orders matched
             if (
-                // order.amount == newOrder.amount &&
-                // order.status == OrderStatus.Open
                 order.orderType != newOrder.orderType &&
                 order.odd == newOrder.odd &&
                 order.outcome == newOrder.outcome &&
+                order.player != newOrder.player &&
                 avalaibleAmount > 0 &&
                 requestAmount > 0
                 ) {
