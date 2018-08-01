@@ -1,7 +1,7 @@
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey('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')
 const config = require('app/config')
-const mailUtil = require('../mailgun/mailUtils')
+const mailUtil = require('../mail/mailUtils')
 const mailConfig = config.mailgun
 
 const sendTenantCode = data =>
@@ -29,9 +29,12 @@ const sendWelcomeEmail = user =>
       sgMail
         .send({
           to: user.email,
-          from: 'no-reply@bookinggenius.com',
-          subject: 'Welcome to bookinggenius',
+          from: 'no-reply@bx.bet',
+          subject: 'Welcome to BX.BET',
           html
+        })
+        .catch(err => {
+          console.log(err)
         })
     )
 
@@ -39,7 +42,7 @@ const sendPasswordResetEmail = user =>
   sgMail
     .send({
       to: user.email,
-      from: 'no-reply@bookinggenius.com',
+      from: 'no-reply@bx.bet',
       subject: 'Reset password',
       text: 'bookinggenius reset password',
       html: 'To reset password click  ' +
@@ -57,8 +60,8 @@ const sendReminderEmail = data =>
       sgMail
         .send({
           to: data.email,
-          from: 'no-reply@bookinggenius.com',
-          subject: 'ACTION REQUIRED: Complete Your ibookinggenius of ' +
+          from: 'no-reply@bx.bet',
+          subject: 'ACTION REQUIRED: Complete Your bx.bet of ' +
             `${data.address} for ${data.companyName}`,
           html
         })
