@@ -114,7 +114,7 @@ class GameRepository {
     try {
       const getQuery = (outcome, orderType) => {
         return [
-          {$match: {orderType, outcome, gameId, status: 0}},
+          {$match: { orderType, outcome, gameId, status: { $in: [0, 1] } }},
           {$sort: {odd: -1}},
           {
             $group: {
@@ -124,7 +124,7 @@ class GameRepository {
                 gameId: '$gameId',
                 odd: '$odd'
               },
-              amount: {$sum: '$amount'}
+              amount: {$sum: {$subtract: [ '$amount', '$matchedAmount' ]}}
             }
           },
           {$limit: 3}
