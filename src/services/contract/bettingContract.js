@@ -23,6 +23,8 @@ global.web3.setProvider(global.web3.currentProvider)
 global.web3.eth.getAccounts().then(accounts => {
   bxbetAccount = accounts[0]
 
+  console.log(bxbetAccount, 'bxbetAccountbxbetAccountbxbetAccountbxbetAccount')
+
   // var balance = global.web3.eth.getBalance(bxbetAccount)
   // balance.then(i => {
   //   console.log(i, ' ------------ ', 'balance')
