@@ -110,11 +110,11 @@ class GameRepository {
     }
   }
 
-  async getGameMaxOdds ({gameId}) {
+  async getGameMaxOdds ({gameId, user}) {
     try {
       const getQuery = (outcome, orderType) => {
         return [
-          {$match: { orderType, outcome, gameId, status: { $in: [0, 1] } }},
+          {$match: { orderType, outcome, gameId, player: {$ne: user.blockChain.address}, status: { $in: [0, 1] } }},
           {$sort: {odd: -1}},
           {
             $group: {

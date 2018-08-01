@@ -103,6 +103,7 @@ const mutation = async (functionName, from, to, ...args) => {
 
 // events
 const gameEvent = (cb) => eventListener('GameEvent', cb)
+const logUint = (cb) => eventListener('LogUint', cb)
 const orderEvent = (cb) => eventListener('OrderEvent', (res) => {
   const newObj = res
   newObj.amount = Number(newObj.amount / decimal)
@@ -227,6 +228,7 @@ const getMutationResultId = (result, key) => {
 }
 module.exports = {
   gameEvent,
+  logUint,
   orderEvent,
   getGame,
   placeOrder,

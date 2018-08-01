@@ -96,50 +96,50 @@ contract Betting is Owned, Balance {
             Order storage order = game.orders[i];
             if (order.status != OrderStatus.Closed) {
                 if (order.status == OrderStatus.Matched) {
-                    unblockTokensByOrder(game.orders[i]);
+                    unblockTokensByOrder(order);
                     // unblockTokensByOrder(game.orders[order.matchedOrderId]);
                     if (order.orderType == OrderType.Buy){ //if is Buy order
                         if (order.outcome == OrderOutcome(outcome)) {
                            //if game's outcome equals order outcome
-                            game.orders[i].status = OrderStatus.Win;
+                            order.status = OrderStatus.Win;
                             // game.orders[order.matchedOrderId].status = OrderStatus.Lose;
                         }else{
                            //if game's outcome does not equals order outcome
-                            game.orders[i].status = OrderStatus.Lose;
+                            order.status = OrderStatus.Lose;
                             // game.orders[order.matchedOrderId].status = OrderStatus.Win;
                         }
                     } else { // if is Sell order
                        if (order.outcome == OrderOutcome(outcome)) {
                             //if game's outcome equals order outcome
-                            game.orders[i].status = OrderStatus.Lose;
+                            order.status = OrderStatus.Lose;
                             // game.orders[order.matchedOrderId].status = OrderStatus.Win;
                        }else{
                            //if game's outcome does not equals order outcome
-                            game.orders[i].status = OrderStatus.Win;
+                            order.status = OrderStatus.Win;
                             // game.orders[order.matchedOrderId].status = OrderStatus.Lose;
                        }
                     }
 
                     if (order.orderType == OrderType.Buy){
-                      for (uint j = 0; j <  order.totalMatched; i++) {
+                      for (uint j = 0; j <  order.totalMatched; j++) {
                          uint matchedAmount = order.matchedOrders[j].amount;
                          uint matchedOrderId = order.matchedOrders[j].matchedOrderId;
                          Order memory matchedOrder = game.orders[matchedOrderId];
-                         transferTokensByOrder(game.orders[i], matchedOrder, matchedAmount, outcome);
+                         transferTokensByOrder(order, matchedOrder, matchedAmount, outcome);
                       }
                     }
                     //send order events for update
-                    emitOrderEvent(game.orders[i]);
+                    emitOrderEvent(order);
                     // emitOrderEvent(game.orders[order.matchedOrderId]);
                 }
 
                 if(order.status == OrderStatus.Open) {
                     //unblock tokens
-                    unblockTokensByOrder(game.orders[i]);
+                    unblockTokensByOrder(order);
                     //update order status which is not matched as closed
-                    game.orders[i].status = OrderStatus.Closed;
+                    order.status = OrderStatus.Closed;
                     //send event on this order for update
-                    emitOrderEvent(game.orders[i]);
+                    emitOrderEvent(order);
                 }
             }
         }
@@ -249,6 +249,10 @@ contract Betting is Owned, Balance {
         }
     }
 
+    event LogUint(string label, uint value);
+    function log(string label, uint value) private {
+        emit LogUint(label, value);
+    }
 
     /**
     * Transfer tokens by order type
@@ -257,6 +261,8 @@ contract Betting is Owned, Balance {
         uint transferAmount;
         address from;
         address to;
+        // log('test-gigaaaa', matchedAmount);
+        // log('order.amount', order.amount);
         if(order.orderType == OrderType.Buy){ // if is buy order
             transferAmount = matchedAmount * order.odd / 100 - matchedAmount;
             if (order.outcome == OrderOutcome(outcome)) {
@@ -280,9 +286,10 @@ contract Betting is Owned, Balance {
                 to = order.player;
             }
         }
+        // log('matchedAmount', matchedAmount);
+        // log('transferAmount', transferAmount);
       //transfer money
       transferTokens(from, to, transferAmount);
-
     }
 
     /**
@@ -315,7 +322,7 @@ contract Betting is Owned, Balance {
 
                 order.status = OrderStatus.Matched;
                 order.matchedAmount = order.matchedAmount + matchedAmount;
-                order.matchedOrders[1] = OrderMatched(newOrder.id, matchedAmount);
+                order.matchedOrders[order.totalMatched] = OrderMatched(newOrder.id, matchedAmount);
                 order.totalMatched = order.totalMatched + 1;
 
                 newOrder.status = OrderStatus.Matched;

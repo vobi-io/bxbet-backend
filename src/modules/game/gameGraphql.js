@@ -83,7 +83,7 @@ module.exports = ({GameModel, gameRepository, TC}) => {
       gameId: 'Float'
     },
     type: GameMaxOdds,
-    resolve: ({ args, context: { user } }) => gameRepository.getGameMaxOdds({...args})
+    resolve: ({ args, context: { user } }) => gameRepository.getGameMaxOdds({...args, user})
   })
 
  // register queries
