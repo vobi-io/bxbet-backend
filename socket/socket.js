@@ -56,7 +56,7 @@ module.exports = function(server) {
     })
 
     client.on('update', (data) => {
-      const {userIds, message} = data
+      const {message} = data
       Object.keys(users).map(key => {
         const userClient = users[key]
         if (userClient) {

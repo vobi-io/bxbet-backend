@@ -23,7 +23,7 @@ module.exports = {
   },
   socket: {
     port: 8006,
-    server: 'http://localhost:8006/'
+    server: 'https://wsbx.vobi.io/'
   },
   auth: {
     activationTokenExpiresIn: ms('1d'),
