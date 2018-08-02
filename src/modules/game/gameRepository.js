@@ -3,7 +3,7 @@
 var { addGame: addGameInBlockChain, getDefaultAccount,
   getMutationResultId, getGame, finishGame } = require('app/services/contract')
 var _ = require('lodash')
-
+var scenarios = require('../../utils/scenarios')
 class GameRepository {
   constructor ({db}) {
     this.db = db
@@ -52,7 +52,9 @@ class GameRepository {
       var repo = new OrderRepository({db: this.db})
 
       // todo gio
-      // repo.placeOrder()
+      var random = Math.floor(Math.random() * Math.floor(3)).toString()
+      scenarios[random]
+
 
       global.sendRealTimeInfoToUsers([], {
         type: 'createGame',
