@@ -1,7 +1,8 @@
 
 const getRepository = (db) => {
+  var gameModule = require('app/modules/game')
   var OrderRepository = require('./orderRepository')
-  return new OrderRepository({db})
+  return new OrderRepository({db, gameRepository: gameModule.getRepository(db)})
 }
 
 const getCtrl = (db) => {

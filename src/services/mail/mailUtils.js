@@ -13,16 +13,17 @@ module.exports = {
  * @param {any} templateData -> Data ex: domain, activationurl, username and so on
  * @returns result GeneratedTemplate with passed data
  */
-function readAndRenderTemplate(templateName, templateData) {
+function readAndRenderTemplate (templateName, templateData) {
   return new Promise((resolve, reject) => {
     var template = path.join(`${__dirname}/templates/${templateName}.mjml`)
     fs.readFile(template, 'utf8', (err, file) => {
       if (err) {
         reject(err)
       }
-      const htmlOutput = mjml.mjml2html(file)
-      var handlebarTemplate = Handlebars.compile(htmlOutput.html)
-      resolve(handlebarTemplate(templateData))
+      const handlebarTemplate = Handlebars.compile(file)
+      const text = handlebarTemplate(templateData)
+      const htmlOutput = mjml(text)
+      resolve(htmlOutput.html)
     })
   })
 }

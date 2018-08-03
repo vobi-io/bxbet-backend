@@ -52,7 +52,7 @@ function sendPasswordResetEmail (user) {
       var data = {
         from: mailConfig.defaultFrom,
         to: user.email,
-        subject: 'Reset password email from BookingGenius',
+        subject: 'Reset password email from bxbet',
         html: result
       }
 

@@ -92,4 +92,40 @@ module.exports = (app) => {
     }
     res.status(500).json(response)
   })
+
+  var config = require('app/config')
+  var socket = require('socket.io-client')(config.socket.server)
+  global.socket = socket
+  /**
+   * Send notification to online user
+   * @param {object} message which message you want sent
+   * @param {string} ownerId maybe user id, which receive this notification
+   */
+  global.sendSocketNotificationToUser = function (message, userId) {
+    if (global.socket) {
+      // console.log(userId, message)
+      socket.emit('notification', { userId, message })
+    }
+  }
+
+  /**
+   * Send notification to online user
+   * @param {string} userId maybe user id, which receive this notification
+   * @param {object} message which message you want to send
+   */
+  global.sendRealTimeInfoToUsers = function (userIds, message) {
+    if (global.socket) {
+      socket.emit('update', { userIds, message })
+    }
+  }
+
+  socket.on('connect', function () {
+    console.log('connect to socket server')
+  })
+  socket.on('event', function (data) {
+    console.log('event of socket server')
+  })
+  socket.on('disconnect', function () {
+    console.log('disconnect socket server')
+  })
 }

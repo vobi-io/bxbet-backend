@@ -7,7 +7,7 @@ const {
   attachOwner
 } = require('../core/graphql')
 
-module.exports = ({GameModel, gameRepository, TC}) => {
+module.exports = ({GameModel, gameRepository, orderRepository, TC}) => {
   const {schemaComposer} = TC
   // generate crud queries and mutations for model
   // uses model.name to generate names
@@ -26,14 +26,20 @@ module.exports = ({GameModel, gameRepository, TC}) => {
   GameTC.addResolver({
     name: 'createGame',
     args: {
-      team1: 'String',
-      team2: 'String',
+      homeTeam: 'String',
+      awayTeam: 'String',
       category: 'String',
       startDate: 'Date',
       endDate: 'Date'
     },
     type: GameTC,
-    resolve: ({ args, context: { user } }) => gameRepository.createGame({game: args, user})
+    resolve: async ({ args, context: { user } }) => {
+      const game = await gameRepository.createGame({game: args, user})
+
+      await orderRepository.randomPlaceOrders({gameId: game.gameId, user})
+
+      return game
+    }
   })
 
   GameTC.addResolver({
@@ -53,11 +59,37 @@ module.exports = ({GameModel, gameRepository, TC}) => {
     },
     type: `type GameReport {
       total: Float,
-      team1: Float,
-      team2: Float,
+      homeTeam: Float,
+      awayTeam: Float,
       draw: Float,
     }`,
     resolve: ({ args, context: { user } }) => gameRepository.gameReport({...args, user})
+  })
+
+  var OddReport = `type OddReport{
+    odd: Float
+    amount: Float
+  }`
+
+  const GameMaxOdds = schemaComposer.TypeComposer.create({
+    name: 'GameMaxOdds',
+    fields: {
+      drawBuy: [OddReport],
+      drawSell: [OddReport],
+      homeTeamBuy: [OddReport],
+      homeTeamSell: [OddReport],
+      awayTeamBuy: [OddReport],
+      awayTeamSell: [OddReport]
+    }
+  })
+
+  GameTC.addResolver({
+    name: 'getGameMaxOdds',
+    args: {
+      gameId: 'Float'
+    },
+    type: GameMaxOdds,
+    resolve: ({ args, context: { user } }) => gameRepository.getGameMaxOdds({...args, user})
   })
 
  // register queries
@@ -65,7 +97,8 @@ module.exports = ({GameModel, gameRepository, TC}) => {
    .rootQuery()
    .addFields({
      ...queries,
-     gameReport: GameTC.get('$gameReport')
+     gameReport: GameTC.get('$gameReport'),
+     getGameMaxOdds: GameTC.get('$getGameMaxOdds')
    })
 
  // register mutations

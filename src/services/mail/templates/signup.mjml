@@ -1,0 +1,92 @@
+<mjml>
+  <mj-head>
+    <mj-style inline="inline">
+      .link{
+         color: black;
+         cursor: pointer;
+         text-decoration: underline
+         outline: none;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-image width="0" src="https://i.imgur.com/3Vh1vSd.png" />
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+          <mj-text font-weight="bold" font-size="18px" align="center">WELCOME TO THE BX MVP</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          The BX MVP is designed to give a first impression of the BX ecosystem.
+          It provides full blockchain-based betting and gives our users the opportunity to bet against each other
+          with the full functionality of a betting exchange.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="18px" font-weight="400">
+          For more details and explanations on the functionality please visit: <a href="https://bx.bet/static/files/whitepaper.pdf" class="link">www.bx.bet/exchange</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          Important: The BX tokens, which are used in the MVP are a dummy currency and not
+          the one, that are being sold in our token sale. There might be some events, in which we
+          will have some promotional events and the real BX tokens are distributed as a price.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          We invite you to join our token sale and become part of the BX community.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400">
+          Have Fun!
+        </mj-text>
+        <mj-text align="center" font-size="18px" font-weight="400">Your BX - Team</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section  background-color="#ffffff">
+      <mj-column>
+        <mj-text align="center" font-size="18px" font-weight="400"><a href="https://bx.bet/en/" class="link">www.bx.bet</a></mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#004D80">
+      <mj-column>
+        <mj-image href="https://twitter.com/BXBETico" src="https://i.imgur.com/7daFo3O.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.youtube.com/watch?v=qLY431v0vrI&feature=youtu.be" src="https://i.imgur.com/1hTBmEJ.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.facebook.com/BXBET/" src="https://i.imgur.com/2QJsmI8.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.reddit.com/r/BXBET/" src="https://i.imgur.com/QdhU7vq.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://t.me/bxbet" src="https://i.imgur.com/8WEIACj.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://medium.com/bxbet" src="https://i.imgur.com/ACXKHTO.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+      <mj-column>
+        <mj-image href="https://www.linkedin.com/company/bx-bet/" src="https://i.imgur.com/ezKLl7f.png" height="59px" padding-right="10px" padding-left="10px"/>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

@@ -1,8 +1,9 @@
-var BXBet = artifacts.require("./BXBet.sol")
+var Betting = artifacts.require("./Betting.sol")
 
 module.exports = function(deployer) {
-  var initialSupply = 100000000000
+  var initialSupply = 17500000000
   var tokenName = 'BXBet'
   var tokenSymbol = 'BX'
-  deployer.deploy(BXBet, initialSupply, tokenName, tokenSymbol);
+  deployer.deploy(Betting, initialSupply, tokenName, tokenSymbol);
 };
+

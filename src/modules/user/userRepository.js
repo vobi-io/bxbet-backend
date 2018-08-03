@@ -3,6 +3,7 @@
 
 var Promise = require('bluebird')
 var { getBalance } = require('app/services/contract')
+var _ = require('lodash')
 
 class UserRepository {
   constructor ({ db }) {
@@ -21,20 +22,25 @@ class UserRepository {
 
   async updateBalance (balance) {
     try {
+      if (!balance || _.isEmpty(balance)) {
+        return Promise.resolve()
+      }
       const address = balance.owner
-      let order = await this.db.UserModel.findOne({ 'blockChain.address': address })
+      var upBalance = {
+        amount: Number(balance.amount),
+        blockAmount: Number(balance.blockAmount),
+        owner: (String(balance.owner)).toLocaleLowerCase()
+      }
       await this.db.UserModel.update(
         { 'blockChain.address': address },
         {
           $set: {
-            amount: Number(balance.amount),
-            blockAmount: Number(balance.blockAmount),
-            owner: String(balance.owner)
+            'blockChain.balance': upBalance
           }
         },
         { upsert: true })
 
-      return Promise.resolve(order)
+      return Promise.resolve(true)
     } catch (err) {
       return Promise.reject(err)
     }

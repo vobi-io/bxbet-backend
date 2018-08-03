@@ -2,14 +2,14 @@
 'use strict'
 var { getGame: getGameFromBlockChain, placeOrder,
    getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
-var gameModule = require('app/modules/game')
+var scenarios = require('app/modules/helpers/datasets/scenarios')
 var _ = require('lodash')
 
 class OrderRepository {
-  constructor ({db}) {
+  constructor ({db, gameRepository}) {
     this.db = db
     this.saveOrder = this.saveOrder.bind(this)
-    this.gameRepository = gameModule.getRepository(this.db)
+    this.gameRepository = gameRepository
   }
 
   async saveOrder (schema) {
@@ -25,10 +25,12 @@ class OrderRepository {
       schema.game = game._id
       await this.db.OrderModel.update(
         {orderId, gameId},
-        schema,
+        {$set: {
+          ...schema
+        }},
         {upsert: true, setDefaultsOnInsert: true})
 
-      let order = await this.db.OrderModel.findOne({orderId})
+      let order = await this.db.OrderModel.findOne({orderId, gameId})
       return Promise.resolve(order)
     } catch (err) {
       return Promise.reject(err)
@@ -45,10 +47,25 @@ class OrderRepository {
       // const orderId = result.logs[1].args.orderId.toString()
       const schema = await getOrderById(gameId, orderId)
       const saveOrder = await this.saveOrder(schema)
+      global.sendRealTimeInfoToUsers([], {
+        type: 'placeOrder',
+        order: saveOrder.toJSON(),
+        fromUserId: user._id
+      })
       return Promise.resolve(saveOrder)
     } catch (err) {
       return Promise.reject(err)
     }
+  }
+
+  async randomPlaceOrders ({gameId, user}) {
+    var random = Math.floor(Math.random() * Math.floor(3))
+    const orders = scenarios[random]
+
+    for (const item of orders) {
+      await this.placeOrder({ order: {...item, gameId}, user })
+    }
+    return true
   }
 }
 

@@ -5,8 +5,11 @@ var rootFolder = path.resolve(__dirname, '..')
 
 module.exports = {
   port: 8005,
+  blockChain: {
+    account: '0xfcad0b19bb29d4674531d6f115237e16afce377c'
+  },
   database: {
-    connection: 'mongodb://localhost:27017/bxbet'
+    connection: 'mongodb://bxbet:V0bi!walkthru@db.vobi.io/bxbet'
   },
   contract: {
     network: 'http://localhost:8545'
@@ -23,7 +26,7 @@ module.exports = {
   },
   socket: {
     port: 8006,
-    server: 'http://localhost:8006/'
+    server: 'https://wsbx.vobi.io/'
   },
   auth: {
     activationTokenExpiresIn: ms('1d'),
@@ -52,7 +55,7 @@ module.exports = {
     // api host
     domainInTemplate: 'http://localhost:8001',
     frontendUrl: 'http://52.40.142.121',
-    defaultFrom: 'contact@walkthru.com'
+    defaultFrom: 'contact@bxbet.com'
   },
   qrCodes: {
     upload: `${rootFolder}/public/qrcodes/`,

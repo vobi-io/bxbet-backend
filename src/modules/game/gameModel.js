@@ -2,13 +2,13 @@ module.exports = (mongoose) => {
   let Schema = mongoose.Schema
 
   let gameSchema = new Schema({
-    gameId: {type: Number, description: 'Game id in Blockchain'},
-    team1: {type: String},
-    team2: {type: String},
+    gameId: {type: Number, description: 'Game id in Blockchain', index: true},
+    homeTeam: {type: String, index: true},
+    awayTeam: {type: String, index: true},
     category: {type: String, description: 'Football, Basketball, etc...'},
     startDate: {type: Number, description: 'Game start date'},
-    endDate: {type: Number, description: 'Game end date'},
-    status: {type: Number, description: 'Open=0, Finished=1'},
+    endDate: {type: Number, description: 'Game end date', index: true},
+    status: {type: Number, description: 'FinishedDraw=0, FinishedOne=1, FinishedTwo=2, Open=3', index: true},
     owner: {type: String},
     totalOrders: {type: Number, default: 0, description: 'Total orders'},
     created: {type: Date, default: Date.now},
@@ -24,7 +24,7 @@ module.exports = (mongoose) => {
   gameSchema.methods.toJSON = function() {
     var obj = this.toObject()
     delete obj.__v
-    delete obj._id
+    // delete obj._id
 
     return obj
   }

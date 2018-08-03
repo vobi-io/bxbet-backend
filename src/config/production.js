@@ -3,7 +3,11 @@ module.exports = {
   port: 8005,
   HTTP_HOST: '',
   database: {
-    connection: 'mongodb://localhost:27017/bxbet'
+    connection: 'mongodb://bxbet:V0bi!walkthru@db.vobi.io/bxbet'
+  },
+  socket: {
+    port: 8006,
+    server: 'https://wsbx.vobi.io/'
   },
   mailgun: {
     apiKey: 'key-',

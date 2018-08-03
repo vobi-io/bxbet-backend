@@ -1,15 +1,15 @@
 'use strict'
 var config = require('app/config')
-var Artifacts = require('../../../build/contracts/BXBet.json')
+var Artifacts = require('../../../build/contracts/Betting.json')
 var Contract = require('truffle-contract')
 var Web3 = require('web3')
 const gas = 3000000
-const freeTokens = 100
+const decimal = 100
 
-let bxbetAccount = '0x291c32452cd81eeaa4d32860d18fb50911dab602'
+let companyAccount = config.blockChain.account
 
-const getBexbetAccount = () => {
-  return bxbetAccount
+const getCompanyAccount = () => {
+  return companyAccount
 }
 
 if (typeof global.web3 === 'undefined') {
@@ -20,18 +20,26 @@ if (typeof global.web3 === 'undefined') {
 global.web3.setProvider(global.web3.currentProvider)
 
 // in development mode
-global.web3.eth.getAccounts().then(accounts => {
-  bxbetAccount = accounts[0]
-})
+// global.web3.eth.getAccounts().then(accounts => {
+//   companyAccount = accounts[0]
+
+//   console.log(companyAccount, 'companyAccountcompanyAccountcompanyAccountcompanyAccount')
+
+//   // var balance = global.web3.eth.getBalance(companyAccount)
+//   // balance.then(i => {
+//   //   console.log(i, ' ------------ ', 'balance')
+//   // })
+// })
 
 const getDefaultAccount = async (index = 0) => {
-  try {
-    const accounts = await global.web3.eth.getAccounts()
-    return Promise.resolve(accounts[index])
-  } catch (err) {
-    console.log(err, getDefaultAccount)
-    return Promise.reject(err)
-  }
+  return companyAccount
+  // try {
+  //   const accounts = await global.web3.eth.getAccounts()
+  //   return Promise.resolve(accounts[index])
+  // } catch (err) {
+  //   console.log(err, getDefaultAccount)
+  //   return Promise.reject(err)
+  // }
 }
 
 var contract = Contract(Artifacts)
@@ -98,17 +106,38 @@ const mutation = async (functionName, from, to, ...args) => {
 
 // events
 const gameEvent = (cb) => eventListener('GameEvent', cb)
-const orderEvent = (cb) => eventListener('OrderEvent', cb)
-const transferEvent = (cb) => eventListener('Transfer', cb)
-const blockTokensEvent = (cb) => eventListener('BlockTokens', cb)
-const unblockTokensEvent = (cb) => eventListener('UnblockTokens', cb)
+const logUint = (cb) => eventListener('LogUint', cb)
+const orderEvent = (cb) => eventListener('OrderEvent', (res) => {
+  const newObj = res
+  newObj.amount = Number(newObj.amount / decimal)
+  newObj.odd = Number(newObj.odd / decimal)
+  newObj.matchedAmount = Number(newObj.matchedAmount / decimal)
+  cb(newObj)
+})
+const transferEvent = (cb) => eventListener('Transfer', (res) => {
+  const newObj = res
+  newObj.value = Number(newObj.value / decimal)
+  cb(newObj)
+})
+const blockTokensEvent = (cb) => eventListener('BlockTokens', (res) => {
+  const newObj = res
+  newObj.amount = Number(newObj.amount / decimal)
+  newObj.blockAmount = Number(newObj.blockAmount / decimal)
+  cb({newObj})
+})
+const unblockTokensEvent = (cb) => eventListener('UnblockTokens', (res) => {
+  const newObj = res
+  newObj.amount = Number(newObj.amount / decimal)
+  newObj.blockAmount = Number(newObj.blockAmount / decimal)
+  cb(newObj)
+})
 
 // query
 const getGame = (_gameId, account) => query('getGame', account, Number(_gameId)).then(g => {
   return Promise.resolve({
     gameId: Number(g[0]),
-    team1: g[1],
-    team2: g[2],
+    homeTeam: g[1],
+    awayTeam: g[2],
     category: g[3],
     startDate: Number(g[4]),
     endDate: Number(g[5]),
@@ -124,25 +153,25 @@ const getOrderById = (_gameId, _orderId, account) => query('getOrderById', accou
     player: g[1],
     gameId: Number(g[2]),
     orderType: Number(g[3]),
-    amount: Number(g[4]),
-    odd: Number(g[5]),
+    amount: Number(Number(g[4]) / decimal),
+    odd: Number(g[5]) / decimal,
     outcome: Number(g[6]),
     status: Number(g[7]),
-    matchedOrderId: Number(g[8])
+    matchedAmount: Number(g[8] / decimal)
   })
 })
 
 const getBalance = (account) => query('getBalance', account).then(g => {
   return Promise.resolve({
-    amount: Number(g[0]),
-    blockAmount: Number(g[1]),
+    amount: Number(g[0]) / decimal,
+    blockAmount: Number(g[1]) / decimal,
     owner: g[2]
   })
 })
 
 // mutation
-const addGame = (_team1, _team2, _category, _startDate, _endDate, status, _owner, account) =>
-   mutation('addGame', account, null, _team1, _team2, _category, _startDate, _endDate, status, _owner)
+const addGame = (_homeTeam, _awayTeam, _category, _startDate, _endDate, status, _owner, account) =>
+   mutation('addGame', account, null, _homeTeam, _awayTeam, _category, _startDate, _endDate, status, _owner)
 
 /**
 *
@@ -153,9 +182,9 @@ const addGame = (_team1, _team2, _category, _startDate, _endDate, status, _owner
 * @param {Number} _outcome (0 - Draw, 1- One, 2- Two)
 */
 const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, _player, account) => mutation('placeOrder', account, null, _gameId,
-                                                          _orderType, _amount, _odd, _outcome, _player)
+                                                          _orderType, _amount * decimal, _odd * 100, _outcome, _player)
 const giveFreeTokens = (toUserAccount, amount = 20000) => {
-  return mutation('giveFreeTokens', bxbetAccount, null, amount, toUserAccount, freeTokens)
+  return mutation('giveFreeTokens', companyAccount, null, amount * decimal, toUserAccount)
 }
 
 /**
@@ -163,7 +192,7 @@ const giveFreeTokens = (toUserAccount, amount = 20000) => {
  * @param {Number} gameId
  * @param {Number} outcome (0 - Draw, 1- One, 2- Two)
  */
-const finishGame = (gameId, outcome, account) => mutation('finishGame', bxbetAccount, account, gameId, outcome)
+const finishGame = (gameId, outcome, account) => mutation('finishGame', companyAccount, account, gameId, outcome)
 
 /**
  * create Ethereum account
@@ -202,6 +231,7 @@ const getMutationResultId = (result, key) => {
 }
 module.exports = {
   gameEvent,
+  logUint,
   orderEvent,
   getGame,
   placeOrder,
@@ -211,9 +241,8 @@ module.exports = {
   createAccount,
   finishGame,
   addGame,
-  freeTokens,
   getDefaultAccount,
-  getBexbetAccount,
+  getCompanyAccount,
   transferEvent,
   blockTokensEvent,
   unblockTokensEvent,
