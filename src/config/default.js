@@ -5,6 +5,9 @@ var rootFolder = path.resolve(__dirname, '..')
 
 module.exports = {
   port: 8005,
+  blockChain: {
+    account: '0xfcad0b19bb29d4674531d6f115237e16afce377c'
+  },
   database: {
     connection: 'mongodb://bxbet:V0bi!walkthru@db.vobi.io/bxbet'
   },

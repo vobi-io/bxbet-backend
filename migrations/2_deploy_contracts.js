@@ -6,3 +6,4 @@ module.exports = function(deployer) {
   var tokenSymbol = 'BX'
   deployer.deploy(Betting, initialSupply, tokenName, tokenSymbol);
 };
+

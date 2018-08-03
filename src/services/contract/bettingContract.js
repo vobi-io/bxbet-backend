@@ -6,10 +6,10 @@ var Web3 = require('web3')
 const gas = 3000000
 const decimal = 100
 
-let bxbetAccount = '0x291c32452cd81eeaa4d32860d18fb50911dab602'
+let companyAccount = config.blockChain.account
 
-const getBexbetAccount = () => {
-  return bxbetAccount
+const getCompanyAccount = () => {
+  return companyAccount
 }
 
 if (typeof global.web3 === 'undefined') {
@@ -20,16 +20,16 @@ if (typeof global.web3 === 'undefined') {
 global.web3.setProvider(global.web3.currentProvider)
 
 // in development mode
-global.web3.eth.getAccounts().then(accounts => {
-  bxbetAccount = accounts[0]
+// global.web3.eth.getAccounts().then(accounts => {
+//   companyAccount = accounts[0]
 
-  console.log(bxbetAccount, 'bxbetAccountbxbetAccountbxbetAccountbxbetAccount')
+//   console.log(companyAccount, 'companyAccountcompanyAccountcompanyAccountcompanyAccount')
 
-  // var balance = global.web3.eth.getBalance(bxbetAccount)
-  // balance.then(i => {
-  //   console.log(i, ' ------------ ', 'balance')
-  // })
-})
+//   // var balance = global.web3.eth.getBalance(companyAccount)
+//   // balance.then(i => {
+//   //   console.log(i, ' ------------ ', 'balance')
+//   // })
+// })
 
 const getDefaultAccount = async (index = 0) => {
   try {
@@ -183,7 +183,7 @@ const addGame = (_homeTeam, _awayTeam, _category, _startDate, _endDate, status, 
 const placeOrder = (_gameId, _orderType, _amount, _odd, _outcome, _player, account) => mutation('placeOrder', account, null, _gameId,
                                                           _orderType, _amount * decimal, _odd * 100, _outcome, _player)
 const giveFreeTokens = (toUserAccount, amount = 20000) => {
-  return mutation('giveFreeTokens', bxbetAccount, null, amount * decimal, toUserAccount)
+  return mutation('giveFreeTokens', companyAccount, null, amount * decimal, toUserAccount)
 }
 
 /**
@@ -191,7 +191,7 @@ const giveFreeTokens = (toUserAccount, amount = 20000) => {
  * @param {Number} gameId
  * @param {Number} outcome (0 - Draw, 1- One, 2- Two)
  */
-const finishGame = (gameId, outcome, account) => mutation('finishGame', bxbetAccount, account, gameId, outcome)
+const finishGame = (gameId, outcome, account) => mutation('finishGame', companyAccount, account, gameId, outcome)
 
 /**
  * create Ethereum account
@@ -241,7 +241,7 @@ module.exports = {
   finishGame,
   addGame,
   getDefaultAccount,
-  getBexbetAccount,
+  getCompanyAccount,
   transferEvent,
   blockTokensEvent,
   unblockTokensEvent,

@@ -41,8 +41,8 @@ class AuthRepository {
     blockChain.schema = await getBalance(blockChain.address)
     schema.blockChain = blockChain
 
-    // const balance3 = await getBalance(getBexbetAccount())
-    // const balance1 = await getBalance(getBexbetAccount())
+    // const balance3 = await getBalance(getCompanyAccount())
+    // const balance1 = await getBalance(getCompanyAccount())
     // console.log(balance3, balance, balance1)
 
     const user = await new UserModel(schema).save()

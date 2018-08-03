@@ -2,7 +2,7 @@
 'use strict'
 var { getGame: getGameFromBlockChain, placeOrder,
    getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
-var scenarios = require('app/utils/scenarios')
+var scenarios = require('app/modules/helpers/datasets/scenarios')
 var _ = require('lodash')
 
 class OrderRepository {
