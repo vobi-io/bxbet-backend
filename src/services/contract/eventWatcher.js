@@ -10,6 +10,7 @@ const runWatcher = async (db) => {
     const userRepository = userModule.getUserRepository(db)
     const gameRepository = gameModule.getRepository(db)
     const orderRepository = orderModule.getRepository(db)
+
     orderEvent(orderRepository.saveOrder)
     gameEvent(gameRepository.saveGame)
     unblockTokensEvent(userRepository.updateBalance)

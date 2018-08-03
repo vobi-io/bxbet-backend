@@ -32,13 +32,14 @@ global.web3.setProvider(global.web3.currentProvider)
 // })
 
 const getDefaultAccount = async (index = 0) => {
-  try {
-    const accounts = await global.web3.eth.getAccounts()
-    return Promise.resolve(accounts[index])
-  } catch (err) {
-    console.log(err, getDefaultAccount)
-    return Promise.reject(err)
-  }
+  return companyAccount
+  // try {
+  //   const accounts = await global.web3.eth.getAccounts()
+  //   return Promise.resolve(accounts[index])
+  // } catch (err) {
+  //   console.log(err, getDefaultAccount)
+  //   return Promise.reject(err)
+  // }
 }
 
 var contract = Contract(Artifacts)

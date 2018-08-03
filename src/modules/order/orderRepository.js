@@ -59,9 +59,10 @@ class OrderRepository {
   }
 
   async randomPlaceOrders ({gameId, user}) {
-    var random = Math.floor(Math.random() * Math.floor(3)).toString()
+    var random = Math.floor(Math.random() * Math.floor(3))
+    const orders = scenarios[random]
 
-    for (const item of scenarios[random]) {
+    for (const item of orders) {
       await this.placeOrder({ order: {...item, gameId}, user })
     }
     return true

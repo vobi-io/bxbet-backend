@@ -43,7 +43,7 @@ class GameRepository {
       const dtNow = Math.round(new Date() / 1000)
       const start = dtNow
       const end = dtNow + 1000
-      const result = await addGameInBlockChain(homeTeam, awayTeam, category, start, end, 0, address, account)
+      const result = await addGameInBlockChain(homeTeam, awayTeam, category, start, end, 3, address, account)
       const gameId = getMutationResultId(result, 'gameId')
       const schema = await getGame(gameId)
       const saveGame = await this.saveGame(schema)
@@ -112,9 +112,14 @@ class GameRepository {
 
   async getGameMaxOdds ({gameId, user}) {
     try {
+      let player
+      if (user) {
+        player = user.blockChain.address
+      }
+
       const getQuery = (outcome, orderType) => {
         return [
-          {$match: { orderType, outcome, gameId, player: {$ne: user.blockChain.address}, status: { $in: [0, 1] } }},
+          {$match: { orderType, outcome, gameId, player: {$ne: player}, status: { $in: [0, 1] } }},
           {$sort: {odd: -1}},
           {
             $group: {

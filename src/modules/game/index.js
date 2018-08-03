@@ -24,7 +24,7 @@ const getGraphql = ({db, TC}) => {
     isAuthenticated,
     TC,
     gameRepository,
-    OrderRepository: new OrderRepository(db, gameRepository)
+    orderRepository: new OrderRepository({db, gameRepository})
   })
 }
 

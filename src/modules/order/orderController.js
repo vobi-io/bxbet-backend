@@ -1,6 +1,5 @@
 /* eslint camelcase:0 */
 'use strict'
-// var OrderRepository = require('./eventRepository')
 var Utils = require('../../utils/Utils')
 var Promise = require('bluebird')
 const roles = require('../roles/roles').roles
