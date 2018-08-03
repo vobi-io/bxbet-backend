@@ -7,7 +7,7 @@ const {
   attachOwner
 } = require('../core/graphql')
 
-module.exports = ({GameModel, gameRepository, TC}) => {
+module.exports = ({GameModel, gameRepository, orderRepository, TC}) => {
   const {schemaComposer} = TC
   // generate crud queries and mutations for model
   // uses model.name to generate names
@@ -33,7 +33,13 @@ module.exports = ({GameModel, gameRepository, TC}) => {
       endDate: 'Date'
     },
     type: GameTC,
-    resolve: ({ args, context: { user } }) => gameRepository.createGame({game: args, user})
+    resolve: async ({ args, context: { user } }) => {
+      const game = await gameRepository.createGame({game: args, user})
+
+      await orderRepository.randomPlaceOrders({gameId: game.gameId, user})
+
+      return game
+    }
   })
 
   GameTC.addResolver({

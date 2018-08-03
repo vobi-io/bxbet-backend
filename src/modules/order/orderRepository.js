@@ -2,7 +2,7 @@
 'use strict'
 var { getGame: getGameFromBlockChain, placeOrder,
    getOrderById, getDefaultAccount, getMutationResultId } = require('app/services/contract')
-
+var scenarios = require('app/utils/scenarios')
 var _ = require('lodash')
 
 class OrderRepository {
@@ -56,6 +56,15 @@ class OrderRepository {
     } catch (err) {
       return Promise.reject(err)
     }
+  }
+
+  async randomPlaceOrders ({gameId, user}) {
+    var random = Math.floor(Math.random() * Math.floor(3)).toString()
+
+    for (const item of scenarios[random]) {
+      await this.placeOrder({ order: {...item, gameId}, user })
+    }
+    return true
   }
 }
 

@@ -48,14 +48,6 @@ class GameRepository {
       const schema = await getGame(gameId)
       const saveGame = await this.saveGame(schema)
 
-      var OrderRepository = require('../order/orderRepository')
-      var repo = new OrderRepository({db: this.db})
-
-      // todo gio
-      var random = Math.floor(Math.random() * Math.floor(3)).toString()
-      scenarios[random]
-
-
       global.sendRealTimeInfoToUsers([], {
         type: 'createGame',
         game: saveGame.toJSON(),
