@@ -58,7 +58,5 @@
     {"odd": 1.7, "amount": 540, "outcome": 2, "orderType": 0},
     {"odd": 1.71, "amount": 230, "outcome": 2, "orderType": 0},
     {"odd": 1.72, "amount": 120, "outcome": 2, "orderType": 0}
-
-
   ]
 }
