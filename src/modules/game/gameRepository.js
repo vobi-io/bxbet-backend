@@ -40,9 +40,9 @@ class GameRepository {
       const {homeTeam, awayTeam, category, startDate, endDate} = game
       const account = await getDefaultAccount(0)
 
-      const dtNow = Math.round(new Date() / 1000)
-      const start = dtNow
-      const end = dtNow + 1000
+      // const dtNow = Math.round(new Date() / 1000)
+      const start = Math.round(new Date(startDate) / 1000)
+      const end = Math.round(new Date(endDate) / 1000)
       const result = await addGameInBlockChain(homeTeam, awayTeam, category, start, end, 3, address, account)
       const gameId = getMutationResultId(result, 'gameId')
       const schema = await getGame(gameId)
